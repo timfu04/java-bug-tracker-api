@@ -2,16 +2,31 @@ version: "3.8"
 
 services:
   postgres:
-    container_name: java-bug-tracker-api-postgres
+    container_name: java-bug-tracker-postgres
     image: postgres
     environment:
       POSTGRES_USER: clementlee
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
     volumes:
-      - postgres:/data/postgres
+      - java-postgres:/data/postgres
     ports:
-      - "5332:5432"
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: java-bug-tracker-pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False' # don't need to go through login page
+    volumes:
+      - java-pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
     networks:
       - postgres
     restart: unless-stopped
@@ -21,8 +36,5 @@ networks:
     driver: bridge
 
 volumes:
-  postgres:
-
-
-
-
+  java-postgres:
+  java-pgadmin:
