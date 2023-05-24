@@ -1,6 +1,7 @@
 package com.clementlee.bugtrackerapi.services.impl;
 
 import com.clementlee.bugtrackerapi.dto.RoleDTO;
+import com.clementlee.bugtrackerapi.exceptions.RoleNotFoundException;
 import com.clementlee.bugtrackerapi.models.Role;
 import com.clementlee.bugtrackerapi.repositories.RoleRepository;
 import com.clementlee.bugtrackerapi.services.RoleService;
@@ -19,7 +20,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDTO createRole(RoleDTO roleDTO) {
         Role role = new Role();
-        role.setName(roleDTO.getName());
+        role.setName(roleDTO.getName().toUpperCase());
         Role newRole = roleRepository.save(role);
         return mapToDto(newRole);
     }
@@ -27,26 +28,29 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleDTO> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
-        return roles.stream().map(role -> mapToDto(role)).collect(Collectors.toList());
+        return roles.stream().map(role -> mapToDto(role)).collect(Collectors.toList()); // convert to List of RoleDTO
     }
 
     @Override
     public RoleDTO getRoleById(int id) {
-        Role role = roleRepository.findById(id).orElseThrow();
+        Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         return mapToDto(role);
     }
 
     @Override
     public RoleDTO updateRole(RoleDTO roleDTO, int id) {
-        Role role = roleRepository.findById(id).orElseThrow();
-        role.setName(roleDTO.getName());
+        Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+        role.setName(roleDTO.getName().toUpperCase());
         Role updatedRole = roleRepository.save(role);
         return mapToDto(updatedRole);
     }
 
     @Override
     public void deleteRole(int id) {
-        roleRepository.deleteById(id);
+        Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+        if (role != null){
+            roleRepository.deleteById(id);
+        }
     }
 
     // Mapping methods

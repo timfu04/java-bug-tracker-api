@@ -14,12 +14,15 @@ import java.util.List;
 @Table(name = "roles")
 @Entity
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role")
     private List<UserEntity> users = new ArrayList<>();
+
 }

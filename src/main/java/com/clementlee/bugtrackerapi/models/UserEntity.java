@@ -21,7 +21,7 @@ public class UserEntity {
     private String email;
 
     @ManyToOne()
-    @JoinColumn(name = "role_id_fk", referencedColumnName = "id")
+    @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
     private Role role;
 
 }
