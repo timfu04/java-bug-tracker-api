@@ -1,8 +1,11 @@
 package com.clementlee.bugtrackerapi.services.impl;
 
 import com.clementlee.bugtrackerapi.dto.UserDTO;
+import com.clementlee.bugtrackerapi.exceptions.RoleNotFoundException;
 import com.clementlee.bugtrackerapi.exceptions.UserNotFoundException;
+import com.clementlee.bugtrackerapi.models.Role;
 import com.clementlee.bugtrackerapi.models.UserEntity;
+import com.clementlee.bugtrackerapi.repositories.RoleRepository;
 import com.clementlee.bugtrackerapi.repositories.UserRepository;
 import com.clementlee.bugtrackerapi.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +20,18 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
+        final String default_role_name = "MEMBER";
+        Role role = roleRepository.findByName(default_role_name.toUpperCase())
+                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
+        userEntity.setRole(role);
         UserEntity newUser = userRepository.save(userEntity);
         return mapToUserDto(newUser);
     }
@@ -41,7 +49,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(UserDTO userDTO, int id) {
+    public UserDTO updateUserFull(UserDTO userDTO, int id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        userEntity.setUsername(userDTO.getUsername());
+        userEntity.setPassword(userDTO.getPassword());
+        userEntity.setEmail(userDTO.getEmail());
+        UserEntity updatedUser = userRepository.save(userEntity);
+        return mapToUserDto(updatedUser);
+    }
+
+    @Override
+    public UserDTO updateUserPartial(UserDTO userDTO, int id) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         if (StringUtils.hasText(userDTO.getUsername())){
             userEntity.setUsername(userDTO.getUsername());
@@ -62,6 +80,28 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public UserDTO updateRole(int id, String name) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Role role = roleRepository.findByName(name.toUpperCase())
+                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+        userEntity.setRole(role);
+        UserEntity updatedUser = userRepository.save(userEntity);
+        return mapToUserDto(updatedUser);
+    }
+
+    // Set default role
+    @Override
+    public UserDTO revokeRole(int id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        final String default_role_name = "MEMBER";
+        Role role = roleRepository.findByName(default_role_name.toUpperCase())
+                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+        userEntity.setRole(role);
+        UserEntity updatedUser = userRepository.save(userEntity);
+        return mapToUserDto(updatedUser);
+    }
+
     // Map UserEntity to UserDTO
     private UserDTO mapToUserDto(UserEntity userEntity){
         UserDTO userDTO = new UserDTO();
@@ -69,6 +109,7 @@ public class UserServiceImpl implements UserService {
         userDTO.setUsername(userEntity.getUsername());
         userDTO.setPassword(userEntity.getPassword());
         userDTO.setEmail(userEntity.getEmail());
+        userDTO.setRole(userEntity.getRole());
         return userDTO;
     }
 
@@ -79,6 +120,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
+        userEntity.setRole(userDTO.getRole());
         return userEntity;
     }
 

@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleValidationException(MethodArgumentNotValidException ex) {
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors(); // get all field errors
-        List<String> errors = fieldErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList(); // get message from each error
+        List<String> errors = fieldErrors.stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList()); // get message from each error
         String error_message = String.join(", ", errors); // join list of errors with comma as separator
         ExceptionResponse response = new ExceptionResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST.value());

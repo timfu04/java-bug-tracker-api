@@ -48,12 +48,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void deleteRole(int id) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-        if (role != null){
-            roleRepository.deleteById(id);
-        }
+        roleRepository.deleteById(id);
     }
 
-    // Mapping methods
     // Map Role to RoleDTO
     private RoleDTO mapToRoleDto(Role role){
         RoleDTO roleDTO = new RoleDTO();
@@ -69,4 +66,5 @@ public class RoleServiceImpl implements RoleService {
         role.setName(roleDTO.getName());
         return role;
     }
+
 }

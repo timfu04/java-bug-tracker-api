@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.controllers;
 
+import com.clementlee.bugtrackerapi.dto.RoleDTO;
 import com.clementlee.bugtrackerapi.dto.UserDTO;
 import com.clementlee.bugtrackerapi.services.impl.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -32,15 +33,30 @@ public class UserController {
         return new ResponseEntity<>(userServiceImpl.getUserById(userId), HttpStatus.OK);
     }
 
-    @PutMapping("user/{id}/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable(value = "id") int userId){
-        return new ResponseEntity<>(userServiceImpl.updateUser(userDTO, userId), HttpStatus.OK);
+    @PutMapping("user/{id}/update-full")
+    public ResponseEntity<UserDTO> updateUserFull(@Valid @RequestBody UserDTO userDTO, @PathVariable(value = "id") int userId){
+        return new ResponseEntity<>(userServiceImpl.updateUserFull(userDTO, userId), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/{id}/update-partial")
+    public ResponseEntity<UserDTO> updateUserPartial(@RequestBody UserDTO userDTO, @PathVariable(value = "id") int userId){
+        return new ResponseEntity<>(userServiceImpl.updateUserPartial(userDTO, userId), HttpStatus.OK);
     }
 
     @DeleteMapping("user/{id}/delete")
     public ResponseEntity<String> deleteUser(@PathVariable(value = "id") int userId){
         userServiceImpl.deleteUser(userId);
         return ResponseEntity.ok("User deleted successfully");
+    }
+
+    @PatchMapping("user/{id}/update-role")
+    public ResponseEntity<UserDTO> updateRole(@PathVariable(value = "id") int userId, @Valid @RequestBody RoleDTO roleDTO){
+        return new ResponseEntity<>(userServiceImpl.updateRole(userId, roleDTO.getName()), HttpStatus.OK);
+    }
+
+    @PutMapping("user/{id}/revoke-role")
+    public ResponseEntity<UserDTO> revokeRole(@PathVariable(value = "id") int userId){
+        return new ResponseEntity<>(userServiceImpl.revokeRole(userId), HttpStatus.OK);
     }
 
 }

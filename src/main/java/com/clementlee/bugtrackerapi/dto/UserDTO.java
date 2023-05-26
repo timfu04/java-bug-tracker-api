@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.dto;
 
+import com.clementlee.bugtrackerapi.models.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -18,5 +19,7 @@ public class UserDTO {
     @NotBlank(message = "Invalid email: Empty email")
     @Email(message = "Invalid email: Incorrect email format")
     private String email;
+
+    private Role role;
 
 }

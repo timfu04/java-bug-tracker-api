@@ -16,11 +16,15 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
     private String password;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
     private Role role;
 
