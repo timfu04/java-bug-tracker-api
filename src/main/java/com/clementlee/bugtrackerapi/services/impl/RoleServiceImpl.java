@@ -22,19 +22,19 @@ public class RoleServiceImpl implements RoleService {
         Role role = new Role();
         role.setName(roleDTO.getName().toUpperCase());
         Role newRole = roleRepository.save(role);
-        return mapToDto(newRole);
+        return mapToRoleDto(newRole);
     }
 
     @Override
     public List<RoleDTO> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
-        return roles.stream().map(role -> mapToDto(role)).collect(Collectors.toList()); // convert to List of RoleDTO
+        return roles.stream().map(role -> mapToRoleDto(role)).collect(Collectors.toList()); // convert to List of RoleDTO
     }
 
     @Override
     public RoleDTO getRoleById(int id) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-        return mapToDto(role);
+        return mapToRoleDto(role);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         role.setName(roleDTO.getName().toUpperCase());
         Role updatedRole = roleRepository.save(role);
-        return mapToDto(updatedRole);
+        return mapToRoleDto(updatedRole);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class RoleServiceImpl implements RoleService {
 
     // Mapping methods
     // Map Role to RoleDTO
-    private RoleDTO mapToDto(Role role){
+    private RoleDTO mapToRoleDto(Role role){
         RoleDTO roleDTO = new RoleDTO();
         roleDTO.setId(role.getId());
         roleDTO.setName(role.getName());
@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     // Map RoleDTO to Role
-    private Role mapToEntity(RoleDTO roleDTO){
+    private Role mapToRoleEntity(RoleDTO roleDTO){
         Role role = new Role();
         role.setId(roleDTO.getId());
         role.setName(roleDTO.getName());
