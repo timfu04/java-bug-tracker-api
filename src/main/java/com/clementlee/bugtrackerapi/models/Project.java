@@ -5,33 +5,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "projects")
 @Entity
-public class UserEntity {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(unique = true, nullable = false)
-    private String username;
-
-    private String password;
+    private String name;
 
     @Column(unique = true, nullable = false)
-    private String email;
+    private String description;
+
+    @Column(unique = true, nullable = false)
+    private LocalDateTime start_date;
+
+    @Column(unique = true, nullable = false)
+    private LocalDateTime end_date;
 
     @ManyToOne
-    @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
-    private Role role;
-
-    @OneToMany(mappedBy = "userEntity")
-    private List<Project> projects = new ArrayList<>();
+    @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
+    private UserEntity userEntity;
 
 }

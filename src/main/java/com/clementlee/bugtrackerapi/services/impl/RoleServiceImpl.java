@@ -20,7 +20,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDTO createRole(RoleDTO roleDTO) {
         Role role = new Role();
-        role.setName(roleDTO.getName().toUpperCase());
+        role.setName(roleDTO.getName());
         Role newRole = roleRepository.save(role);
         return mapToRoleDto(newRole);
     }
@@ -40,7 +40,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDTO updateRole(RoleDTO roleDTO, int id) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-        role.setName(roleDTO.getName().toUpperCase());
+        role.setName(roleDTO.getName());
         Role updatedRole = roleRepository.save(role);
         return mapToRoleDto(updatedRole);
     }
