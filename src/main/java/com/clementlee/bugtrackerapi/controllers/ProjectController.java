@@ -24,11 +24,7 @@ public class ProjectController {
     }
 
 
-
-
-
-
-
+    
 
     @GetMapping("project")
     public ResponseEntity<List<String>> getAllProjects(){
