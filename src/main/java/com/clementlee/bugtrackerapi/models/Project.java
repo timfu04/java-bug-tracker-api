@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -25,10 +25,10 @@ public class Project {
     private String description;
 
     @Column(unique = true, nullable = false)
-    private LocalDateTime start_date;
+    private LocalDate startDate;
 
     @Column(unique = true, nullable = false)
-    private LocalDateTime end_date;
+    private LocalDate endDate;
 
     @ManyToOne
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")

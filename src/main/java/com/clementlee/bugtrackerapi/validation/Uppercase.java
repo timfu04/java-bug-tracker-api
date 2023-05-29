@@ -5,7 +5,7 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD, ElementType.PARAMETER}) // can be declared in field or parameter
+@Target({ElementType.FIELD}) // can be declared in field level
 @Retention(RetentionPolicy.RUNTIME) // implement in runtime level
 @Documented
 @Constraint(validatedBy = UppercaseValidator.class) // "Uppercase" annotation takes logic from "UppercaseValidator" class

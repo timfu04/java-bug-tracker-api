@@ -1,9 +1,8 @@
 package com.clementlee.bugtrackerapi.dto;
 
+import com.clementlee.bugtrackerapi.validation.ValidateDate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class ProjectDTO {
@@ -17,9 +16,11 @@ public class ProjectDTO {
     private String description;
 
     @NotBlank(message = "Invalid start date: Empty start date")
-    private LocalDateTime start_date;
+    @ValidateDate(fieldName = "startDate")
+    private String startDate;
 
     @NotBlank(message = "Invalid end date: Empty end date")
-    private LocalDateTime end_date;
+    @ValidateDate(fieldName = "endDate")
+    private String endDate;
 
 }
