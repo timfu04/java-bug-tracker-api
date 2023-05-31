@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true, nullable = false)
@@ -31,7 +33,8 @@ public class UserEntity {
     @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
     private Role role;
 
-    @OneToMany(mappedBy = "userEntity")
+    @JsonIgnore // skip "projects" field when serializing a "User" object
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
     private List<Project> projects = new ArrayList<>();
 
 }

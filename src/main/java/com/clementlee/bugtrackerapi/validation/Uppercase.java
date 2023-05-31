@@ -5,13 +5,13 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD}) // can be declared in field level
+@Target({ElementType.FIELD}) // allow field declaration
 @Retention(RetentionPolicy.RUNTIME) // implement in runtime level
 @Documented
-@Constraint(validatedBy = UppercaseValidator.class) // "Uppercase" annotation takes logic from "UppercaseValidator" class
+@Constraint(validatedBy = UppercaseValidator.class) // "Uppercase" annotation based on logic in "UppercaseValidator" class
 public @interface Uppercase {
 
-    public String message() default "Invalid name: Name must be in uppercase";
+    public String message() default "";
 
     Class<?>[] groups() default { };
 

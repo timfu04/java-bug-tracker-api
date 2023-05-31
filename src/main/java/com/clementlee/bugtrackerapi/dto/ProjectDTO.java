@@ -1,10 +1,12 @@
 package com.clementlee.bugtrackerapi.dto;
 
+import com.clementlee.bugtrackerapi.models.UserEntity;
 import com.clementlee.bugtrackerapi.validation.ValidateDate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@ValidateDate
 public class ProjectDTO {
 
     private int id;
@@ -16,11 +18,10 @@ public class ProjectDTO {
     private String description;
 
     @NotBlank(message = "Invalid start date: Empty start date")
-    @ValidateDate(fieldName = "startDate")
     private String startDate;
 
     @NotBlank(message = "Invalid end date: Empty end date")
-    @ValidateDate(fieldName = "endDate")
     private String endDate;
 
+    private UserEntity userEntity;
 }

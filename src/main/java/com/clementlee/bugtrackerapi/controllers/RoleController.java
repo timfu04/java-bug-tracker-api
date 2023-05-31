@@ -27,18 +27,18 @@ public class RoleController {
         return new ResponseEntity<>(roleServiceImpl.getAllRoles(), HttpStatus.OK);
     }
 
-    @GetMapping("role/{id}")
-    public ResponseEntity<RoleDTO> getRoleById(@PathVariable(value = "id") int roleId){
+    @GetMapping("role/{roleId}")
+    public ResponseEntity<RoleDTO> getRoleById(@PathVariable(value = "roleId") int roleId){
         return new ResponseEntity<>(roleServiceImpl.getRoleById(roleId), HttpStatus.OK);
     }
 
-    @PutMapping("role/{id}/update")
-    public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO, @PathVariable(value = "id") int roleId){
+    @PutMapping("role/{roleId}/update")
+    public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO, @PathVariable(value = "roleId") int roleId){
         return new ResponseEntity<>(roleServiceImpl.updateRole(roleDTO, roleId), HttpStatus.OK);
     }
 
-    @DeleteMapping("role/{id}/delete")
-    public ResponseEntity<String> deleteRole(@PathVariable(value = "id") int roleId){
+    @DeleteMapping("role/{roleId}/delete")
+    public ResponseEntity<String> deleteRole(@PathVariable(value = "roleId") int roleId){
         roleServiceImpl.deleteRole(roleId);
         return ResponseEntity.ok("Role deleted successfully");
     }

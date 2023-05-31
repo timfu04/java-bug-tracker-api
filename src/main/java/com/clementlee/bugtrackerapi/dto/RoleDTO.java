@@ -10,7 +10,7 @@ public class RoleDTO {
     private int id;
 
     @NotBlank(message = "Invalid name: Empty name")
-    @Uppercase
+    @Uppercase(message = "Invalid name: Name must be in uppercase")
     private String name;
 
 }

@@ -8,10 +8,10 @@ public interface UserService {
 
     UserDTO createUser(UserDTO userDTO);
     List<UserDTO> getAllUsers();
-    UserDTO getUserById(int id);
-    UserDTO updateUserFull(UserDTO userDTO, int id);
-    UserDTO updateUserPartial(UserDTO userDTO, int id);
-    void deleteUser(int id);
-    UserDTO updateRole(int id, String name);
-    UserDTO revokeRole(int id);
+    UserDTO getUserById(int userId);
+    UserDTO updateUserFull(UserDTO userDTO, int userId);
+    UserDTO updateUserPartial(UserDTO userDTO, int userId);
+    void deleteUser(int userId);
+    UserDTO updateRole(int userId, String name);
+    UserDTO revokeRole(int userId);
 }

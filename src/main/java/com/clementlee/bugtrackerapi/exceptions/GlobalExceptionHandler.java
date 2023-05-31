@@ -4,57 +4,85 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice // handle exceptions from any controller
 public class GlobalExceptionHandler {
 
+    // Handles role not found exception
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleRoleNotFoundException(RoleNotFoundException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setStatusCode(HttpStatus.NOT_FOUND.value());
-        response.setMessage(ex.getMessage());
-        response.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles validation exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleValidationException(MethodArgumentNotValidException ex) {
+
+        // Field errors
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors(); // get all field errors
-        List<String> errors = fieldErrors.stream()
-                .filter(error -> !error.getDefaultMessage().isEmpty()) // filter out field errors with empty message
-                .map(error -> error.getDefaultMessage()) // get error message
+        List<String> strFieldErrors = fieldErrors.stream()
+                .filter(fieldError -> !fieldError.getDefaultMessage().isEmpty()) // filter out field errors with empty message
+                .map(fieldError -> fieldError.getDefaultMessage()) // get message from each field error
                 .collect(Collectors.toList());
-        String error_message = String.join(", ", errors); // join list of errors with comma as separator
-        ExceptionResponse response = new ExceptionResponse();
-        response.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        response.setMessage(error_message);
-        response.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+        // Non-field errors
+        List<ObjectError> nonFieldErrors = ex.getBindingResult().getAllErrors(); // get non-field errors
+        List<String> strnNonFieldErrors = nonFieldErrors.stream()
+                .filter(nonFieldError -> !nonFieldError.getDefaultMessage().isEmpty()) // filter out non-field errors with empty message
+                .map(nonFieldError -> nonFieldError.getDefaultMessage()) // get message from each non-field error
+                .collect(Collectors.toList());
+
+        List<String> finalErrors = new ArrayList<>();
+        if (!strFieldErrors.isEmpty()){ // if field errors string list is not empty
+            finalErrors = strFieldErrors;
+        } else if (!strnNonFieldErrors.isEmpty()) { // if non-field errors string list is not empty
+            finalErrors = strnNonFieldErrors;
+        }
+
+        String error_message = String.join(", ", finalErrors); // join list of errors with comma as separator
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.BAD_REQUEST.value(), error_message, LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    // Handles data integrity exceptions (database related)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ExceptionResponse> handleDataIntegrityException(DataIntegrityViolationException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        response.setMessage(ex.getMostSpecificCause().getMessage());
-        response.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ExceptionResponse exceptionResponse =
+                createExceptionResponse(HttpStatus.BAD_REQUEST.value(), ex.getMostSpecificCause().getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    // Handles user not found exception
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles project not found exception
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleProjectNotFoundException(ProjectNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Create exception response
+    private ExceptionResponse createExceptionResponse(int statusCode, String message, LocalDateTime timestamp){
         ExceptionResponse response = new ExceptionResponse();
-        response.setStatusCode(HttpStatus.NOT_FOUND.value());
-        response.setMessage(ex.getMessage());
-        response.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        response.setStatusCode(statusCode);
+        response.setMessage(message);
+        response.setTimestamp(timestamp);
+        return response;
     }
 
 }

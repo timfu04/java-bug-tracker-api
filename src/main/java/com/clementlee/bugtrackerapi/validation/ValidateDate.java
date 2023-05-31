@@ -5,15 +5,13 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = DateValidator.class)
 public @interface ValidateDate {
 
-    public String message() default "";
-
-    public String fieldName();
+    String message() default "";
 
     Class<?>[] groups() default { };
 

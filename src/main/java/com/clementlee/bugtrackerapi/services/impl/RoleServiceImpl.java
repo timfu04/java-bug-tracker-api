@@ -28,27 +28,27 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleDTO> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
-        return roles.stream().map(role -> mapToRoleDto(role)).collect(Collectors.toList()); // convert to List of RoleDTO
+        return roles.stream().map(role -> mapToRoleDto(role)).collect(Collectors.toList()); // convert list of Role to list of RoleDTO
     }
 
     @Override
-    public RoleDTO getRoleById(int id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+    public RoleDTO getRoleById(int roleId) {
+        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         return mapToRoleDto(role);
     }
 
     @Override
-    public RoleDTO updateRole(RoleDTO roleDTO, int id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+    public RoleDTO updateRole(RoleDTO roleDTO, int roleId) {
+        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         role.setName(roleDTO.getName());
         Role updatedRole = roleRepository.save(role);
         return mapToRoleDto(updatedRole);
     }
 
     @Override
-    public void deleteRole(int id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-        roleRepository.deleteById(id);
+    public void deleteRole(int roleId) {
+        roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+        roleRepository.deleteById(roleId);
     }
 
     // Map Role to RoleDTO
@@ -57,14 +57,6 @@ public class RoleServiceImpl implements RoleService {
         roleDTO.setId(role.getId());
         roleDTO.setName(role.getName());
         return roleDTO;
-    }
-
-    // Map RoleDTO to Role
-    private Role mapToRoleEntity(RoleDTO roleDTO){
-        Role role = new Role();
-        role.setId(roleDTO.getId());
-        role.setName(roleDTO.getName());
-        return role;
     }
 
 }

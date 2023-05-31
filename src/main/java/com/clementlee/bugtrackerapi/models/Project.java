@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,12 +25,13 @@ public class Project {
     @Column(unique = true, nullable = false)
     private String description;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private LocalDate startDate;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private LocalDate endDate;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
     private UserEntity userEntity;
