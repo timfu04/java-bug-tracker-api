@@ -3,7 +3,8 @@ package com.clementlee.bugtrackerapi.controllers;
 import com.clementlee.bugtrackerapi.dto.RoleDTO;
 import com.clementlee.bugtrackerapi.dto.UserDTO;
 import com.clementlee.bugtrackerapi.services.impl.UserServiceImpl;
-import com.clementlee.bugtrackerapi.validation.EmailValidationGroup;
+import com.clementlee.bugtrackerapi.validation.UserAllFieldsValidationGroup;
+import com.clementlee.bugtrackerapi.validation.UserEmailValidationGroup;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserServiceImpl userServiceImpl;
 
     @PostMapping("user/create")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> createUser(@Validated(UserAllFieldsValidationGroup.class) @RequestBody UserDTO userDTO){
         return new ResponseEntity<>(userServiceImpl.createUser(userDTO), HttpStatus.CREATED);
     }
 
@@ -31,34 +32,36 @@ public class UserController {
     }
 
     @GetMapping("user/{userId}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(userServiceImpl.getUserById(userId), HttpStatus.OK);
+    public ResponseEntity<UserDTO> getUserByUserId(@PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(userServiceImpl.getUserByUserId(userId), HttpStatus.OK);
     }
 
     @PutMapping("user/{userId}/update-full")
-    public ResponseEntity<UserDTO> updateUserFull(@Valid @RequestBody UserDTO userDTO, @PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(userServiceImpl.updateUserFull(userDTO, userId), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateUserFullByUserId(@Validated(UserAllFieldsValidationGroup.class) @RequestBody UserDTO userDTO,
+                                                          @PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(userServiceImpl.updateUserFullByUserId(userDTO, userId), HttpStatus.OK);
     }
 
     @PatchMapping("user/{userId}/update-partial")
-    public ResponseEntity<UserDTO> updateUserPartial(@Validated(EmailValidationGroup.class) @RequestBody UserDTO userDTO, @PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(userServiceImpl.updateUserPartial(userDTO, userId), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateUserPartialByUserId(@Validated(UserEmailValidationGroup.class) @RequestBody UserDTO userDTO,
+                                                             @PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(userServiceImpl.updateUserPartialByUserId(userDTO, userId), HttpStatus.OK);
     }
 
     @DeleteMapping("user/{userId}/delete")
-    public ResponseEntity<String> deleteUser(@PathVariable(value = "userId") int userId){
-        userServiceImpl.deleteUser(userId);
+    public ResponseEntity<String> deleteUserByUserId(@PathVariable(value = "userId") int userId){
+        userServiceImpl.deleteUserByUserId(userId);
         return ResponseEntity.ok("User deleted successfully");
     }
 
     @PatchMapping("user/{userId}/update-role")
-    public ResponseEntity<UserDTO> updateRole(@PathVariable(value = "userId") int userId, @Valid @RequestBody RoleDTO roleDTO){
-        return new ResponseEntity<>(userServiceImpl.updateRole(userId, roleDTO.getName()), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateRoleByUserId(@PathVariable(value = "userId") int userId, @Valid @RequestBody RoleDTO roleDTO){
+        return new ResponseEntity<>(userServiceImpl.updateRoleByUserId(userId, roleDTO.getName()), HttpStatus.OK);
     }
 
     @PutMapping("user/{userId}/revoke-role")
-    public ResponseEntity<UserDTO> revokeRole(@PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(userServiceImpl.revokeRole(userId), HttpStatus.OK);
+    public ResponseEntity<UserDTO> revokeRoleByUserId(@PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(userServiceImpl.revokeRoleByUserId(userId), HttpStatus.OK);
     }
 
 }

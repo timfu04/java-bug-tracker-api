@@ -32,13 +32,13 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO getRoleById(int roleId) {
+    public RoleDTO getRoleByRoleId(int roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         return mapToRoleDto(role);
     }
 
     @Override
-    public RoleDTO updateRole(RoleDTO roleDTO, int roleId) {
+    public RoleDTO updateRoleByRoleId(RoleDTO roleDTO, int roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         role.setName(roleDTO.getName());
         Role updatedRole = roleRepository.save(role);
@@ -46,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteRole(int roleId) {
+    public void deleteRoleByRoleId(int roleId) {
         roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         roleRepository.deleteById(roleId);
     }
@@ -56,6 +56,7 @@ public class RoleServiceImpl implements RoleService {
         RoleDTO roleDTO = new RoleDTO();
         roleDTO.setId(role.getId());
         roleDTO.setName(role.getName());
+        roleDTO.setUsers(role.getUsers());
         return roleDTO;
     }
 

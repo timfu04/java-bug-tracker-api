@@ -34,6 +34,6 @@ public class Project {
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
-    private UserEntity userEntity;
+    private UserEntity user;
 
 }

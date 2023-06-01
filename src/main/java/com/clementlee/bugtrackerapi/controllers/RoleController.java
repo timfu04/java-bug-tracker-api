@@ -28,18 +28,18 @@ public class RoleController {
     }
 
     @GetMapping("role/{roleId}")
-    public ResponseEntity<RoleDTO> getRoleById(@PathVariable(value = "roleId") int roleId){
-        return new ResponseEntity<>(roleServiceImpl.getRoleById(roleId), HttpStatus.OK);
+    public ResponseEntity<RoleDTO> getRoleByRoleId(@PathVariable(value = "roleId") int roleId){
+        return new ResponseEntity<>(roleServiceImpl.getRoleByRoleId(roleId), HttpStatus.OK);
     }
 
     @PutMapping("role/{roleId}/update")
-    public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO, @PathVariable(value = "roleId") int roleId){
-        return new ResponseEntity<>(roleServiceImpl.updateRole(roleDTO, roleId), HttpStatus.OK);
+    public ResponseEntity<RoleDTO> updateRoleByRoleId(@Valid @RequestBody RoleDTO roleDTO, @PathVariable(value = "roleId") int roleId){
+        return new ResponseEntity<>(roleServiceImpl.updateRoleByRoleId(roleDTO, roleId), HttpStatus.OK);
     }
 
     @DeleteMapping("role/{roleId}/delete")
-    public ResponseEntity<String> deleteRole(@PathVariable(value = "roleId") int roleId){
-        roleServiceImpl.deleteRole(roleId);
+    public ResponseEntity<String> deleteRoleByRoleId(@PathVariable(value = "roleId") int roleId){
+        roleServiceImpl.deleteRoleByRoleId(roleId);
         return ResponseEntity.ok("Role deleted successfully");
     }
 

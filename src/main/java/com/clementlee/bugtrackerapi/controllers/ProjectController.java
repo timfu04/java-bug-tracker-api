@@ -2,10 +2,13 @@ package com.clementlee.bugtrackerapi.controllers;
 
 import com.clementlee.bugtrackerapi.dto.ProjectDTO;
 import com.clementlee.bugtrackerapi.services.impl.ProjectServiceImpl;
-import jakarta.validation.Valid;
+import com.clementlee.bugtrackerapi.validation.DateValidator;
+import com.clementlee.bugtrackerapi.validation.ProjectAllFieldsValidationGroup;
+import com.clementlee.bugtrackerapi.validation.ProjectDateValidationGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +21,9 @@ public class ProjectController {
     private final ProjectServiceImpl projectServiceImpl;
 
     @PostMapping("user/{userId}/project/create")
-    public ResponseEntity<ProjectDTO> createProject(@Valid @RequestBody ProjectDTO projectDTO, @PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(projectServiceImpl.createProject(projectDTO, userId), HttpStatus.CREATED);
+    public ResponseEntity<ProjectDTO> createProjectByUserId(@PathVariable(value = "userId") int userId,
+                                                            @Validated(ProjectAllFieldsValidationGroup.class) @RequestBody ProjectDTO projectDTO){
+        return new ResponseEntity<>(projectServiceImpl.createProjectByUserId(userId, projectDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("user/{userId}/project")
@@ -29,17 +33,25 @@ public class ProjectController {
 
     @GetMapping("user/{userId}/project/{projectId}")
     public ResponseEntity<ProjectDTO> getProjectByIdByUserId(@PathVariable int projectId, @PathVariable int userId){
-        return new ResponseEntity<>(projectServiceImpl.getProjectByIdByUserId(projectId, userId), HttpStatus.OK);
+        return new ResponseEntity<>(projectServiceImpl.getProjectByUserIdByProjectId(projectId, userId), HttpStatus.OK);
     }
-
-
 
     @GetMapping("project")
     public ResponseEntity<List<ProjectDTO>> getAllProjects(){
         return new ResponseEntity<>(projectServiceImpl.getAllProjects(), HttpStatus.OK);
     }
 
+    @PutMapping("project/{projectId}/update-full")
+    public ResponseEntity<ProjectDTO> updateProjectFullByProjectId(@PathVariable(value = "projectId") int projectId,
+                                                                   @Validated(ProjectAllFieldsValidationGroup.class) @RequestBody ProjectDTO projectDTO){
+        return new ResponseEntity<>(projectServiceImpl.updateProjectFullByProjectId(projectId, projectDTO), HttpStatus.OK);
+    }
 
+    @PatchMapping("project/{projectId}/update-partial")
+    public ResponseEntity<ProjectDTO> updateProjectPartialByProjectId(@PathVariable(value = "projectId") int projectId,
+                                                                      @Validated(ProjectDateValidationGroup.class) @RequestBody ProjectDTO projectDTO){
+        return new ResponseEntity<>(projectServiceImpl.updateProjectPartialByProjectId(projectId, projectDTO), HttpStatus.OK);
+    }
 
     @DeleteMapping("project/{projectId}/delete")
     public ResponseEntity<String> deleteProjectByProjectId(@PathVariable(value = "projectId") int projectId){

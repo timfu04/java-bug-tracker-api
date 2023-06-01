@@ -33,6 +33,8 @@ public class UserServiceImpl implements UserService {
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setRole(role);
         UserEntity newUser = userRepository.save(userEntity);
+        role.getUsers().add(newUser);
+        roleRepository.save(role);
         return mapToUserDto(newUser);
     }
 
@@ -43,13 +45,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(int userId) {
+    public UserDTO getUserByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         return mapToUserDto(userEntity);
     }
 
     @Override
-    public UserDTO updateUserFull(UserDTO userDTO, int userId) {
+    public UserDTO updateUserFullByUserId(UserDTO userDTO, int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
@@ -59,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserPartial(UserDTO userDTO, int userId) {
+    public UserDTO updateUserPartialByUserId(UserDTO userDTO, int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         if (StringUtils.hasText(userDTO.getUsername())){
             userEntity.setUsername(userDTO.getUsername());
@@ -75,13 +77,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(int userId) {
+    public void deleteUserByUserId(int userId) {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         userRepository.deleteById(userId);
     }
 
     @Override
-    public UserDTO updateRole(int userId, String name) {
+    public UserDTO updateRoleByUserId(int userId, String name) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Role role = roleRepository.findByName(name.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
@@ -92,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
     // Set default role
     @Override
-    public UserDTO revokeRole(int userId) {
+    public UserDTO revokeRoleByUserId(int userId) {
         final String defaultRoleName = "MEMBER";
         Role role = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));

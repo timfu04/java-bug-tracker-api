@@ -31,14 +31,14 @@ public class GlobalExceptionHandler {
         // Field errors
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors(); // get all field errors
         List<String> strFieldErrors = fieldErrors.stream()
-                .filter(fieldError -> !fieldError.getDefaultMessage().isEmpty()) // filter out field errors with empty message
+                .filter(fieldError -> !fieldError.getDefaultMessage().isBlank()) // filter out field errors with empty message
                 .map(fieldError -> fieldError.getDefaultMessage()) // get message from each field error
                 .collect(Collectors.toList());
 
         // Non-field errors
         List<ObjectError> nonFieldErrors = ex.getBindingResult().getAllErrors(); // get non-field errors
         List<String> strnNonFieldErrors = nonFieldErrors.stream()
-                .filter(nonFieldError -> !nonFieldError.getDefaultMessage().isEmpty()) // filter out non-field errors with empty message
+                .filter(nonFieldError -> !nonFieldError.getDefaultMessage().isBlank()) // filter out non-field errors with empty message
                 .map(nonFieldError -> nonFieldError.getDefaultMessage()) // get message from each non-field error
                 .collect(Collectors.toList());
 

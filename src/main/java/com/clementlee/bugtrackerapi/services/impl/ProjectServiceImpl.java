@@ -11,6 +11,7 @@ import com.clementlee.bugtrackerapi.repositories.UserRepository;
 import com.clementlee.bugtrackerapi.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +26,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserRepository userRepository;
 
     @Override
-    public ProjectDTO createProject(ProjectDTO projectDTO, int userId) {
+    public ProjectDTO createProjectByUserId(int userId, ProjectDTO projectDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
         Project project = new Project();
@@ -33,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.setDescription((projectDTO.getDescription()));
         project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter)); // convert String to LocalDate
         project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter)); // convert String to LocalDate
-        project.setUserEntity(userEntity);
+        project.setUser(userEntity);
         Project newProject = projectRepository.save(project);
         userEntity.getProjects().add(newProject);
         userRepository.save(userEntity);
@@ -42,20 +43,19 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDTO> getAllProjectsByUserId(int userId) {
-        List<Project> projects = projectRepository.findByUserEntityId(userId);
+        List<Project> projects = projectRepository.findByUserId(userId);
         return projects.stream().map(project -> mapToProjectDto(project)).collect(Collectors.toList());
     }
 
     @Override
-    public ProjectDTO getProjectByIdByUserId(int projectId, int userId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+    public ProjectDTO getProjectByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        if (project.getUserEntity().getId() != userEntity.getId()){
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        if (project.getUser().getId() != userEntity.getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
         return mapToProjectDto(project);
     }
-
 
     @Override
     public List<ProjectDTO> getAllProjects() {
@@ -64,8 +64,35 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO updateProject(int projectId) {
-        return null;
+    public ProjectDTO updateProjectFullByProjectId(int projectId, ProjectDTO projectDTO) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        project.setName(projectDTO.getName());
+        project.setDescription(projectDTO.getDescription());
+        project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter));
+        project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter));
+        Project updatedProject = projectRepository.save(project);
+        return mapToProjectDto(updatedProject);
+    }
+
+    @Override
+    public ProjectDTO updateProjectPartialByProjectId(int projectId, ProjectDTO projectDTO) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        if (StringUtils.hasText(projectDTO.getName())){
+            project.setName(projectDTO.getName());
+        }
+        if (StringUtils.hasText(projectDTO.getDescription())){
+            project.setDescription(projectDTO.getDescription());
+        }
+        if (StringUtils.hasText(projectDTO.getStartDate())){
+            project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter));
+        }
+        if (StringUtils.hasText(projectDTO.getEndDate())){
+            project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter));
+        }
+        Project updatedProject = projectRepository.save(project);
+        return mapToProjectDto(updatedProject);
     }
 
     @Override
@@ -73,7 +100,6 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         projectRepository.deleteById(projectId);
     }
-
 
     // Map Project to ProjectDTO
     private ProjectDTO mapToProjectDto(Project project){
@@ -84,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectDTO.setDescription(project.getDescription());
         projectDTO.setStartDate(project.getStartDate().format(formatter)); // convert LocalDate into String
         projectDTO.setEndDate(project.getEndDate().format(formatter)); // convert LocalDate into String
-        projectDTO.setUserEntity(project.getUserEntity());
+        projectDTO.setUser(project.getUser());
         return projectDTO;
     }
 

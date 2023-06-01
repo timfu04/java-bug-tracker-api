@@ -6,16 +6,18 @@ import java.util.List;
 
 public interface ProjectService {
 
-    ProjectDTO createProject(ProjectDTO projectDTO, int userId);
-
+    ProjectDTO createProjectByUserId(int userId, ProjectDTO projectDTO);
     List<ProjectDTO> getAllProjectsByUserId(int userId);
+    ProjectDTO getProjectByUserIdByProjectId(int userId, int projectId);
 
-    ProjectDTO getProjectByIdByUserId(int projectId, int userId);
+
+
+
+
 
     List<ProjectDTO> getAllProjects();
-
-    ProjectDTO updateProject(int projectId);
-
+    ProjectDTO updateProjectFullByProjectId(int projectId, ProjectDTO projectDTO);
+    ProjectDTO updateProjectPartialByProjectId(int projectId, ProjectDTO projectDTO);
     void deleteProjectByProjectId(int projectId);
 
 }

@@ -1,9 +1,12 @@
 package com.clementlee.bugtrackerapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,5 +21,9 @@ public class Role {
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    private List<UserEntity> users;
 
 }
