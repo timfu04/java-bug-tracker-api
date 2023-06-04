@@ -76,6 +76,27 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles status not found exception
+    @ExceptionHandler(StatusNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleStatusNotFoundException(StatusNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles severity not found exception
+    @ExceptionHandler(SeverityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleSeverityNotFoundException(SeverityNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles priority not found exception
+    @ExceptionHandler(PriorityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handlePriorityNotFoundException(PriorityNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
     // Create exception response
     private ExceptionResponse createExceptionResponse(int statusCode, String message, LocalDateTime timestamp){
         ExceptionResponse response = new ExceptionResponse();

@@ -32,23 +32,25 @@ public class DateValidator implements ConstraintValidator<ValidateDate, ProjectD
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu"); // "uuuu" means year after Java 8
 
-        Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        String strProjectId = (String) pathVariables.get("projectId");
-        int projectId = Integer.parseInt(strProjectId);
+        try{
+            Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            String strProjectId = (String) pathVariables.get("projectId");
+            int projectId = Integer.parseInt(strProjectId);
 
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+            Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
 
-        if (projectDTO.getStartDate() == null){
-            projectDTO.setStartDate(project.getStartDate().format(formatter));
-        } else if (projectDTO.getStartDate().isBlank()) {
-            projectDTO.setStartDate(project.getStartDate().format(formatter));
-        }
+            if (projectDTO.getStartDate() == null){
+                projectDTO.setStartDate(project.getStartDate().format(formatter));
+            } else if (projectDTO.getStartDate().isBlank()) {
+                projectDTO.setStartDate(project.getStartDate().format(formatter));
+            }
 
-        if (projectDTO.getEndDate() == null){
-            projectDTO.setEndDate(project.getEndDate().format(formatter));
-        } else if (projectDTO.getEndDate().isBlank()) {
-            projectDTO.setEndDate(project.getEndDate().format(formatter));
-        }
+            if (projectDTO.getEndDate() == null){
+                projectDTO.setEndDate(project.getEndDate().format(formatter));
+            } else if (projectDTO.getEndDate().isBlank()) {
+                projectDTO.setEndDate(project.getEndDate().format(formatter));
+            }
+        }catch (Exception e1){}
 
         // Validate date format & ensure day within range for given month and year
         try {

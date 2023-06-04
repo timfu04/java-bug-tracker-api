@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.dto;
 
+import com.clementlee.bugtrackerapi.models.Issue;
 import com.clementlee.bugtrackerapi.models.UserEntity;
 import com.clementlee.bugtrackerapi.validation.ProjectAllFieldsValidationGroup;
 import com.clementlee.bugtrackerapi.validation.ProjectDateValidationGroup;

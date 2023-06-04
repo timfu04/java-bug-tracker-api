@@ -1,7 +1,6 @@
 package com.clementlee.bugtrackerapi.services.impl;
 
 import com.clementlee.bugtrackerapi.dto.ProjectDTO;
-import com.clementlee.bugtrackerapi.dto.UserDTO;
 import com.clementlee.bugtrackerapi.exceptions.ProjectNotFoundException;
 import com.clementlee.bugtrackerapi.exceptions.UserNotFoundException;
 import com.clementlee.bugtrackerapi.models.Project;
@@ -51,10 +50,61 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO getProjectByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (project.getUser().getId() != userEntity.getId()){
+        if (userEntity.getId() != project.getUser().getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
         return mapToProjectDto(project);
+    }
+
+    @Override
+    public ProjectDTO updateProjectFullByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        if (userEntity.getId() != project.getUser().getId()){
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+        project.setName(projectDTO.getName());
+        project.setDescription(projectDTO.getDescription());
+        project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter));
+        project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter));
+        Project updatedProject = projectRepository.save(project);
+        return mapToProjectDto(updatedProject);
+    }
+
+    @Override
+    public ProjectDTO updateProjectPartialByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        if (userEntity.getId() != project.getUser().getId()){
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+        if (StringUtils.hasText(projectDTO.getName())){
+            project.setName(projectDTO.getName());
+        }
+        if (StringUtils.hasText(projectDTO.getDescription())){
+            project.setDescription(projectDTO.getDescription());
+        }
+        if (StringUtils.hasText(projectDTO.getStartDate())){
+            project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter));
+        }
+        if (StringUtils.hasText(projectDTO.getEndDate())){
+            project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter));
+        }
+        Project updatedProject = projectRepository.save(project);
+        return mapToProjectDto(updatedProject);
+    }
+
+    @Override
+    public void deleteProjectByUserIdByProjectId(int userId, int projectId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        if (userEntity.getId() != project.getUser().getId()){
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+        projectRepository.deleteById(projectId);
     }
 
     @Override

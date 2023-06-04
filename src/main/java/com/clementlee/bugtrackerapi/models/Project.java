@@ -1,12 +1,14 @@
 package com.clementlee.bugtrackerapi.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -36,4 +38,7 @@ public class Project {
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
     private UserEntity user;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "project")
+    private List<Issue> issues;
 }
