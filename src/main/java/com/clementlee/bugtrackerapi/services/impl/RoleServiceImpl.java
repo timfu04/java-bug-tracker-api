@@ -28,7 +28,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleDTO> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
-        return roles.stream().map(role -> mapToRoleDto(role)).collect(Collectors.toList()); // convert list of Role to list of RoleDTO
+        return roles.stream().map(role -> mapToRoleDto(role)).collect(Collectors.toList()); // Convert list of Role into list of RoleDTO
     }
 
     @Override
@@ -38,7 +38,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO updateRoleByRoleId(RoleDTO roleDTO, int roleId) {
+    public RoleDTO updateRoleByRoleId(int roleId, RoleDTO roleDTO) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         role.setName(roleDTO.getName());
         Role updatedRole = roleRepository.save(role);

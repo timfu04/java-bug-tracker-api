@@ -26,12 +26,13 @@ public class ProjectController {
     }
 
     @GetMapping("user/{userId}/project")
-    public ResponseEntity<List<ProjectDTO>> getAllProjectsByUserId(@PathVariable int userId){
+    public ResponseEntity<List<ProjectDTO>> getAllProjectsByUserId(@PathVariable(value = "userId") int userId){
         return new ResponseEntity<>(projectServiceImpl.getAllProjectsByUserId(userId), HttpStatus.OK);
     }
 
     @GetMapping("user/{userId}/project/{projectId}")
-    public ResponseEntity<ProjectDTO> getProjectByUserIdByProjectId(@PathVariable int userId, @PathVariable int projectId){
+    public ResponseEntity<ProjectDTO> getProjectByUserIdByProjectId(@PathVariable(value = "userId") int userId,
+                                                                    @PathVariable(value = "projectId") int projectId){
         return new ResponseEntity<>(projectServiceImpl.getProjectByUserIdByProjectId(userId, projectId), HttpStatus.OK);
     }
 
@@ -44,8 +45,8 @@ public class ProjectController {
 
     @PatchMapping("user/{userId}/project/{projectId}/update-partial")
     public ResponseEntity<ProjectDTO> updateProjectPartialByUserIdByProjectId(@PathVariable(value = "userId") int userId,
-                                                                           @PathVariable(value = "projectId") int projectId,
-                                                                           @RequestBody ProjectDTO projectDTO){
+                                                                              @PathVariable(value = "projectId") int projectId,
+                                                                              @Validated(ProjectDateValidationGroup.class) @RequestBody ProjectDTO projectDTO){
         return new ResponseEntity<>(projectServiceImpl.updateProjectPartialByUserIdByProjectId(userId, projectId, projectDTO), HttpStatus.OK);
     }
 

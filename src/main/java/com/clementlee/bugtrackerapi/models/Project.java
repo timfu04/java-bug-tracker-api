@@ -38,7 +38,8 @@ public class Project {
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
     private UserEntity user;
 
-    @JsonIgnore
+    @JsonIgnore // Skip "issues" field when serializing "Project" object into JSON (avoid infinite recursion in bidirectional relationships)
     @OneToMany(mappedBy = "project")
     private List<Issue> issues;
+
 }

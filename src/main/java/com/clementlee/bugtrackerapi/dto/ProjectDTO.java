@@ -1,15 +1,14 @@
 package com.clementlee.bugtrackerapi.dto;
 
-import com.clementlee.bugtrackerapi.models.Issue;
 import com.clementlee.bugtrackerapi.models.UserEntity;
 import com.clementlee.bugtrackerapi.validation.ProjectAllFieldsValidationGroup;
 import com.clementlee.bugtrackerapi.validation.ProjectDateValidationGroup;
-import com.clementlee.bugtrackerapi.validation.ValidateDate;
+import com.clementlee.bugtrackerapi.validation.ValidateProjectDate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@ValidateDate(groups = {ProjectAllFieldsValidationGroup.class, ProjectDateValidationGroup.class})
+@ValidateProjectDate(groups = {ProjectAllFieldsValidationGroup.class, ProjectDateValidationGroup.class})
 public class ProjectDTO {
 
     private int id;
@@ -27,4 +26,5 @@ public class ProjectDTO {
     private String endDate;
 
     private UserEntity user;
+
 }

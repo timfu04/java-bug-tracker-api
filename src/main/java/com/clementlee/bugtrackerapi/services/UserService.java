@@ -9,9 +9,10 @@ public interface UserService {
     UserDTO createUser(UserDTO userDTO);
     List<UserDTO> getAllUsers();
     UserDTO getUserByUserId(int userId);
-    UserDTO updateUserFullByUserId(UserDTO userDTO, int userId);
-    UserDTO updateUserPartialByUserId(UserDTO userDTO, int userId);
+    UserDTO updateUserFullByUserId(int userId, UserDTO userDTO);
+    UserDTO updateUserPartialByUserId(int userId, UserDTO userDTO);
     void deleteUserByUserId(int userId);
-    UserDTO updateRoleByUserId(int userId, String name);
+    UserDTO updateRoleByUserIdByRoleName(int userId, String roleName);
     UserDTO revokeRoleByUserId(int userId);
+
 }

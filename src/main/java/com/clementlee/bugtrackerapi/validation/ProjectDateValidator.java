@@ -16,27 +16,24 @@ import java.time.format.ResolverStyle;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class DateValidator implements ConstraintValidator<ValidateDate, ProjectDTO> {
+public class ProjectDateValidator implements ConstraintValidator<ValidateProjectDate, ProjectDTO> {
 
-    private final HttpServletRequest request; // to get path variable(projectId) from request
+    private final HttpServletRequest request; // To get path variable(projectId) from request
     private final ProjectRepository projectRepository;
 
     @Override
     public boolean isValid(ProjectDTO projectDTO, ConstraintValidatorContext context) {
 
-        context.disableDefaultConstraintViolation(); // disable default message
-
-        LocalDate startDate;
-        LocalDate endDate;
-        LocalDate currentDate = LocalDate.now();
+        context.disableDefaultConstraintViolation(); // Disable default message
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu"); // "uuuu" means year after Java 8
 
-        try{
-            Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-            String strProjectId = (String) pathVariables.get("projectId");
-            int projectId = Integer.parseInt(strProjectId);
+        // Get path variable(projectId) from request
+        Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        String strProjectId = (String) pathVariables.get("projectId");
 
+        if (strProjectId != null){ // If string project id is not null (request includes projectId path variable)
+            int projectId = Integer.parseInt(strProjectId);
             Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
 
             if (projectDTO.getStartDate() == null){
@@ -50,7 +47,19 @@ public class DateValidator implements ConstraintValidator<ValidateDate, ProjectD
             } else if (projectDTO.getEndDate().isBlank()) {
                 projectDTO.setEndDate(project.getEndDate().format(formatter));
             }
-        }catch (Exception e1){}
+
+            return ProjectDateValidation(projectDTO, context, formatter);
+
+        }else { // If string project id is null (request does not have projectId path variable, e.g. create project)
+            return ProjectDateValidation(projectDTO, context, formatter);
+        }
+    }
+
+    private boolean ProjectDateValidation(ProjectDTO projectDTO, ConstraintValidatorContext context, DateTimeFormatter formatter){
+
+        LocalDate startDate;
+        LocalDate endDate;
+        LocalDate currentDate = LocalDate.now();
 
         // Validate date format & ensure day within range for given month and year
         try {
@@ -58,7 +67,6 @@ public class DateValidator implements ConstraintValidator<ValidateDate, ProjectD
             startDate = LocalDate.parse(projectDTO.getStartDate(), formatter.withResolverStyle(ResolverStyle.STRICT));
             endDate = LocalDate.parse(projectDTO.getEndDate(), formatter.withResolverStyle(ResolverStyle.STRICT));
         } catch (Exception e2) {
-            context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Invalid date: Day given not within given month and must be in dd/mm/yyyy format")
                     .addConstraintViolation();
             return false;

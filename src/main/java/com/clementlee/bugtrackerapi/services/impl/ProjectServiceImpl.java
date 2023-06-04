@@ -31,8 +31,8 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = new Project();
         project.setName(projectDTO.getName());
         project.setDescription((projectDTO.getDescription()));
-        project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter)); // convert String to LocalDate
-        project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter)); // convert String to LocalDate
+        project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter)); // Convert String to LocalDate
+        project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter)); // Convert String to LocalDate
         project.setUser(userEntity);
         Project newProject = projectRepository.save(project);
         userEntity.getProjects().add(newProject);
@@ -43,6 +43,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> getAllProjectsByUserId(int userId) {
         List<Project> projects = projectRepository.findByUserId(userId);
+        if (projects.isEmpty()){
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+        // Convert list of Project to list of ProjectDTO
         return projects.stream().map(project -> mapToProjectDto(project)).collect(Collectors.toList());
     }
 
@@ -79,7 +83,6 @@ public class ProjectServiceImpl implements ProjectService {
         if (userEntity.getId() != project.getUser().getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
         if (StringUtils.hasText(projectDTO.getName())){
             project.setName(projectDTO.getName());
@@ -110,13 +113,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
+        // Convert list of Project to list of ProjectDTO
         return projects.stream().map(project -> mapToProjectDto(project)).collect(Collectors.toList());
     }
 
     @Override
     public ProjectDTO updateProjectFullByProjectId(int projectId, ProjectDTO projectDTO) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
         project.setName(projectDTO.getName());
         project.setDescription(projectDTO.getDescription());
         project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter));
@@ -127,8 +131,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDTO updateProjectPartialByProjectId(int projectId, ProjectDTO projectDTO) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
         if (StringUtils.hasText(projectDTO.getName())){
             project.setName(projectDTO.getName());
         }
@@ -163,10 +167,5 @@ public class ProjectServiceImpl implements ProjectService {
         projectDTO.setUser(project.getUser());
         return projectDTO;
     }
-
-
-
-
-
 
 }

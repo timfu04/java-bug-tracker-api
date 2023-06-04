@@ -37,15 +37,15 @@ public class UserController {
     }
 
     @PutMapping("user/{userId}/update-full")
-    public ResponseEntity<UserDTO> updateUserFullByUserId(@Validated(UserAllFieldsValidationGroup.class) @RequestBody UserDTO userDTO,
-                                                          @PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(userServiceImpl.updateUserFullByUserId(userDTO, userId), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateUserFullByUserId(@PathVariable(value = "userId") int userId,
+                                                          @Validated(UserAllFieldsValidationGroup.class) @RequestBody UserDTO userDTO){
+        return new ResponseEntity<>(userServiceImpl.updateUserFullByUserId(userId, userDTO), HttpStatus.OK);
     }
 
     @PatchMapping("user/{userId}/update-partial")
-    public ResponseEntity<UserDTO> updateUserPartialByUserId(@Validated(UserEmailValidationGroup.class) @RequestBody UserDTO userDTO,
-                                                             @PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(userServiceImpl.updateUserPartialByUserId(userDTO, userId), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateUserPartialByUserId(@PathVariable(value = "userId") int userId,
+                                                             @Validated(UserEmailValidationGroup.class) @RequestBody UserDTO userDTO){
+        return new ResponseEntity<>(userServiceImpl.updateUserPartialByUserId(userId, userDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("user/{userId}/delete")
@@ -55,8 +55,8 @@ public class UserController {
     }
 
     @PatchMapping("user/{userId}/update-role")
-    public ResponseEntity<UserDTO> updateRoleByUserId(@PathVariable(value = "userId") int userId, @Valid @RequestBody RoleDTO roleDTO){
-        return new ResponseEntity<>(userServiceImpl.updateRoleByUserId(userId, roleDTO.getName()), HttpStatus.OK);
+    public ResponseEntity<UserDTO> updateRoleByUserIdByRoleName(@PathVariable(value = "userId") int userId, @Valid @RequestBody RoleDTO roleDTO){
+        return new ResponseEntity<>(userServiceImpl.updateRoleByUserIdByRoleName(userId, roleDTO.getName()), HttpStatus.OK);
     }
 
     @PutMapping("user/{userId}/revoke-role")

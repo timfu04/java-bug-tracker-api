@@ -8,8 +8,8 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = DateValidator.class)
-public @interface ValidateDate {
+@Constraint(validatedBy = ProjectDateValidator.class)
+public @interface ValidateProjectDate {
 
     String message() default "";
 

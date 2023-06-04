@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -35,7 +34,7 @@ public class UserEntity {
     @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
     private Role role;
 
-    @JsonIgnore // skip "projects" field when serializing a "User" object into JSON
+    @JsonIgnore // Skip "projects" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
     @OneToMany(mappedBy = "user")
     private List<Project> projects;
 

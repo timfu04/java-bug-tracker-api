@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
-        userEntity.setRole(role);
+        userEntity.setRole(role); // Assign "MEMBER" as default role for new user
         UserEntity newUser = userRepository.save(userEntity);
         role.getUsers().add(newUser);
         roleRepository.save(role);
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getAllUsers() {
         List<UserEntity> users = userRepository.findAll();
-        return users.stream().map(user -> mapToUserDto(user)).collect(Collectors.toList()); // convert list of UserEntity to list of UserDTO
+        return users.stream().map(user -> mapToUserDto(user)).collect(Collectors.toList()); // Convert list of UserEntity to list of UserDTO
     }
 
     @Override
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserFullByUserId(UserDTO userDTO, int userId) {
+    public UserDTO updateUserFullByUserId(int userId, UserDTO userDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserPartialByUserId(UserDTO userDTO, int userId) {
+    public UserDTO updateUserPartialByUserId(int userId, UserDTO userDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         if (StringUtils.hasText(userDTO.getUsername())){
             userEntity.setUsername(userDTO.getUsername());
@@ -83,9 +83,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateRoleByUserId(int userId, String name) {
+    public UserDTO updateRoleByUserIdByRoleName(int userId, String roleName) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        Role role = roleRepository.findByName(name.toUpperCase())
+        Role role = roleRepository.findByName(roleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         userEntity.setRole(role);
         UserEntity updatedUser = userRepository.save(userEntity);
@@ -115,16 +115,5 @@ public class UserServiceImpl implements UserService {
         userDTO.setProjects(userEntity.getProjects());
         return userDTO;
     }
-
-    // Map UserDTO to UserEntity
-//    private UserEntity mapToUserEntity(UserDTO userDTO){
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setId(userDTO.getId());
-//        userEntity.setUsername(userDTO.getUsername());
-//        userEntity.setPassword(userDTO.getPassword());
-//        userEntity.setEmail(userDTO.getEmail());
-//        userEntity.setRole(userDTO.getRole());
-//        return userEntity;
-//    }
 
 }

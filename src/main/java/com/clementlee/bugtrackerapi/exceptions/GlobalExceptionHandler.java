@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice // handle exceptions from any controller
+@RestControllerAdvice // An interceptor of exceptions thrown by methods annotated with @RequestMapping
 public class GlobalExceptionHandler {
 
     // Handles role not found exception
@@ -29,24 +29,36 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleValidationException(MethodArgumentNotValidException ex) {
 
         // Field errors
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors(); // get all field errors
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors(); // Get a list of all field errors
         List<String> strFieldErrors = fieldErrors.stream()
-                .filter(fieldError -> !fieldError.getDefaultMessage().isBlank()) // filter out field errors with empty message
-                .map(fieldError -> fieldError.getDefaultMessage()) // get message from each field error
+                .filter(fieldError -> !fieldError.getDefaultMessage().isBlank()) // Remove field errors with empty message
+                .map(fieldError -> fieldError.getDefaultMessage()) // Get message from each field error
                 .collect(Collectors.toList());
 
         // Non-field errors
-        List<ObjectError> nonFieldErrors = ex.getBindingResult().getAllErrors(); // get non-field errors
+        List<ObjectError> nonFieldErrors = ex.getBindingResult().getAllErrors(); // Get a list of all non-field errors
         List<String> strnNonFieldErrors = nonFieldErrors.stream()
-                .filter(nonFieldError -> !nonFieldError.getDefaultMessage().isBlank()) // filter out non-field errors with empty message
-                .map(nonFieldError -> nonFieldError.getDefaultMessage()) // get message from each non-field error
+                .filter(nonFieldError -> !nonFieldError.getDefaultMessage().isBlank()) // Remove non-field errors with empty message
+                .map(nonFieldError -> nonFieldError.getDefaultMessage()) // Get message from each non-field error
                 .collect(Collectors.toList());
 
+        // Choose errors to proceed
+        List<String> errorsChosen = new ArrayList<>();
+        if (!strFieldErrors.isEmpty()){ // If list of string field errors is not empty
+            errorsChosen = strFieldErrors;
+        } else if (!strnNonFieldErrors.isEmpty()) { // If list of string non-field errors is not empty
+            errorsChosen = strnNonFieldErrors;
+        }
+
+        // Format errors chosen if list size more than 1
         List<String> finalErrors = new ArrayList<>();
-        if (!strFieldErrors.isEmpty()){ // if field errors string list is not empty
-            finalErrors = strFieldErrors;
-        } else if (!strnNonFieldErrors.isEmpty()) { // if non-field errors string list is not empty
-            finalErrors = strnNonFieldErrors;
+        if (errorsChosen.size() > 1){
+            for (int i = 0; i < errorsChosen.size(); i++) {
+                String formatted = String.format("[%d. %s]", i+1, errorsChosen.get(i)); // Add index and square brackets
+                finalErrors.add(formatted);
+            }
+        }else {
+            finalErrors = errorsChosen;
         }
 
         String error_message = String.join(", ", finalErrors); // join list of errors with comma as separator

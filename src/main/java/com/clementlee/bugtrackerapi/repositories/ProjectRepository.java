@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-    List<Project> findByUserId(int userId); // find projects by user id
+    List<Project> findByUserId(int userId); // Find projects by user id (derived query method)
 
 }
