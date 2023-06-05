@@ -28,6 +28,7 @@ public class PriorityServiceImpl implements PriorityService {
     @Override
     public List<PriorityDTO> getAllPriorities() {
         List<Priority> priorities = priorityRepository.findAll();
+        // Convert list of Priority to list of PriorityDTO
         return priorities.stream().map(priority -> mapToPriorityDto(priority)).collect(Collectors.toList());
     }
 
@@ -47,7 +48,7 @@ public class PriorityServiceImpl implements PriorityService {
 
     @Override
     public void deletePriorityByPriorityId(int priorityId) {
-        Priority priority = priorityRepository.findById(priorityId).orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
+        priorityRepository.findById(priorityId).orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
         priorityRepository.deleteById(priorityId);
     }
 
@@ -56,6 +57,8 @@ public class PriorityServiceImpl implements PriorityService {
         PriorityDTO priorityDTO = new PriorityDTO();
         priorityDTO.setId(priority.getId());
         priorityDTO.setName(priority.getName());
+        priorityDTO.setIssues(priority.getIssues());
         return priorityDTO;
     }
+
 }
