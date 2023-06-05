@@ -28,6 +28,7 @@ public class SeverityServiceImpl implements SeverityService {
     @Override
     public List<SeverityDTO> getAllSeverities() {
         List<Severity> severities = severityRepository.findAll();
+        // Convert list of Severity to list of SeverityDTO
         return severities.stream().map(severity -> mapToSeverityDto(severity)).collect(Collectors.toList());
     }
 
@@ -47,7 +48,7 @@ public class SeverityServiceImpl implements SeverityService {
 
     @Override
     public void deleteSeverityBySeverityId(int severityId) {
-        Severity severity = severityRepository.findById(severityId).orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
+        severityRepository.findById(severityId).orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
         severityRepository.deleteById(severityId);
     }
 
@@ -56,6 +57,8 @@ public class SeverityServiceImpl implements SeverityService {
         SeverityDTO severityDTO = new SeverityDTO();
         severityDTO.setId(severity.getId());
         severityDTO.setName(severity.getName());
+        severityDTO.setIssues(severity.getIssues());
         return severityDTO;
     }
+
 }

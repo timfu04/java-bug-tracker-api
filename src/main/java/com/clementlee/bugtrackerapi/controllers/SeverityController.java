@@ -2,6 +2,7 @@ package com.clementlee.bugtrackerapi.controllers;
 
 import com.clementlee.bugtrackerapi.dto.SeverityDTO;
 import com.clementlee.bugtrackerapi.services.impl.SeverityServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class SeverityController {
     private final SeverityServiceImpl severityServiceImpl;
 
     @PostMapping("severity/create")
-    public ResponseEntity<SeverityDTO> createSeverity(@RequestBody SeverityDTO severityDTO){
+    public ResponseEntity<SeverityDTO> createSeverity(@Valid @RequestBody SeverityDTO severityDTO){
         return new ResponseEntity<>(severityServiceImpl.createSeverity(severityDTO), HttpStatus.CREATED);
     }
 
@@ -32,7 +33,8 @@ public class SeverityController {
     }
 
     @PutMapping("severity/{severityId}/update")
-    public ResponseEntity<SeverityDTO> updateSeverityBySeverityId(@PathVariable(value = "severityId") int severityId, @RequestBody SeverityDTO severityDTO){
+    public ResponseEntity<SeverityDTO> updateSeverityBySeverityId(@PathVariable(value = "severityId") int severityId,
+     @Valid                                                             @RequestBody SeverityDTO severityDTO){
         return new ResponseEntity<>(severityServiceImpl.updateSeverityBySeverityId(severityId, severityDTO), HttpStatus.OK);
     }
 
@@ -41,4 +43,5 @@ public class SeverityController {
         severityServiceImpl.deleteSeverityBySeverityId(severityId);
         return ResponseEntity.ok("Severity deleted successfully");
     }
+
 }

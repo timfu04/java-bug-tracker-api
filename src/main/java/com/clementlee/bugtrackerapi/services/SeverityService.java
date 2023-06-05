@@ -11,4 +11,5 @@ public interface SeverityService {
     SeverityDTO getSeverityBySeverityId(int severityId);
     SeverityDTO updateSeverityBySeverityId(int severityId, SeverityDTO severityDTO);
     void deleteSeverityBySeverityId(int severityId);
+
 }
