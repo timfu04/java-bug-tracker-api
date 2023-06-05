@@ -1,7 +1,7 @@
 package com.clementlee.bugtrackerapi.dto;
 
 import com.clementlee.bugtrackerapi.models.UserEntity;
-import com.clementlee.bugtrackerapi.validation.Uppercase;
+import com.clementlee.bugtrackerapi.validation.annotations.Uppercase;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

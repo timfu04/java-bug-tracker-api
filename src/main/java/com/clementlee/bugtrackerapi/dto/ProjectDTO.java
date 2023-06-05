@@ -1,9 +1,9 @@
 package com.clementlee.bugtrackerapi.dto;
 
 import com.clementlee.bugtrackerapi.models.UserEntity;
-import com.clementlee.bugtrackerapi.validation.ProjectAllFieldsValidationGroup;
-import com.clementlee.bugtrackerapi.validation.ProjectDateValidationGroup;
-import com.clementlee.bugtrackerapi.validation.ValidateProjectDate;
+import com.clementlee.bugtrackerapi.validation.markerinterface.ProjectAllFieldsValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterface.ProjectDateValidationGroup;
+import com.clementlee.bugtrackerapi.validation.annotations.ValidateProjectDate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

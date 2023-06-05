@@ -2,8 +2,8 @@ package com.clementlee.bugtrackerapi.controllers;
 
 import com.clementlee.bugtrackerapi.dto.ProjectDTO;
 import com.clementlee.bugtrackerapi.services.impl.ProjectServiceImpl;
-import com.clementlee.bugtrackerapi.validation.ProjectAllFieldsValidationGroup;
-import com.clementlee.bugtrackerapi.validation.ProjectDateValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterface.ProjectAllFieldsValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterface.ProjectDateValidationGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.validation;
 
+import com.clementlee.bugtrackerapi.validation.annotations.Uppercase;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

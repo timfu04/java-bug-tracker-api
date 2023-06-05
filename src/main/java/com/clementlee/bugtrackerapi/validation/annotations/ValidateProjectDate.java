@@ -1,5 +1,6 @@
-package com.clementlee.bugtrackerapi.validation;
+package com.clementlee.bugtrackerapi.validation.annotations;
 
+import com.clementlee.bugtrackerapi.validation.ProjectDateValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
