@@ -28,6 +28,7 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public List<StatusDTO> getAllStatuses() {
         List<Status> statuses = statusRepository.findAll();
+        // Convert list of Status to list of StatusDTO
         return statuses.stream().map(status -> mapToStatusDto(status)).collect(Collectors.toList());
     }
 
@@ -56,6 +57,7 @@ public class StatusServiceImpl implements StatusService {
         StatusDTO statusDTO = new StatusDTO();
         statusDTO.setId(status.getId());
         statusDTO.setName(status.getName());
+        statusDTO.setIssues(status.getIssues());
         return statusDTO;
     }
 

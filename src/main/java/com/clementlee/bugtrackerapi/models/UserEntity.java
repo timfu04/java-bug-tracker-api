@@ -29,7 +29,7 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @JsonBackReference
+    @JsonBackReference(value = "roles-users")
     @ManyToOne
     @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
     private Role role;

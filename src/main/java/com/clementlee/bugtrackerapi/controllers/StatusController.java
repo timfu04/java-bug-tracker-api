@@ -2,6 +2,7 @@ package com.clementlee.bugtrackerapi.controllers;
 
 import com.clementlee.bugtrackerapi.dto.StatusDTO;
 import com.clementlee.bugtrackerapi.services.impl.StatusServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class StatusController {
     private final StatusServiceImpl statusServiceImpl;
 
     @PostMapping("status/create")
-    public ResponseEntity<StatusDTO> createStatus(@RequestBody StatusDTO statusDTO){
+    public ResponseEntity<StatusDTO> createStatus(@Valid @RequestBody StatusDTO statusDTO){
         return new ResponseEntity<>(statusServiceImpl.createStatus(statusDTO), HttpStatus.CREATED);
     }
 
@@ -32,7 +33,7 @@ public class StatusController {
     }
 
     @PutMapping("status/{statusId}/update")
-    public ResponseEntity<StatusDTO> updateStatusByStatusId(@PathVariable(value = "statusId") int statusId, @RequestBody StatusDTO statusDTO){
+    public ResponseEntity<StatusDTO> updateStatusByStatusId(@PathVariable(value = "statusId") int statusId, @Valid @RequestBody StatusDTO statusDTO){
         return new ResponseEntity<>(statusServiceImpl.updateStatusByStatusId(statusId, statusDTO), HttpStatus.OK);
     }
 

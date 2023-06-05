@@ -22,7 +22,7 @@ public class Status {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @JsonIgnore
+    @JsonIgnore // Skip "issues" field when serializing "Status" object into JSON (avoid infinite recursion in bidirectional relationships)
     @OneToMany(mappedBy = "status")
     private List<Issue> issues;
 

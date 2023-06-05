@@ -33,7 +33,7 @@ public class Project {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    @JsonBackReference
+    @JsonBackReference(value = "users-projects")
     @ManyToOne
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
     private UserEntity user;

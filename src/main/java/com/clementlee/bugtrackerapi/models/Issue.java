@@ -32,22 +32,22 @@ public class Issue {
     private LocalDateTime resolvedDate;
     private LocalDateTime closedDate;
 
-    @JsonBackReference
+    @JsonBackReference(value = "projects-issues")
     @ManyToOne
     @JoinColumn(name = "fk_projects_id", referencedColumnName = "id")
     private Project project;
 
-    @JsonBackReference
+    @JsonBackReference(value = "statuses-issues")
     @ManyToOne
     @JoinColumn(name = "fk_statuses_id", referencedColumnName = "id")
     private Status status;
 
-    @JsonBackReference
+    @JsonBackReference(value = "severities-issues")
     @ManyToOne
     @JoinColumn(name = "fk_severities_id", referencedColumnName = "id")
     private Severity severity;
 
-    @JsonBackReference
+    @JsonBackReference(value = "priorities-issues")
     @ManyToOne
     @JoinColumn(name = "fk_priorities_id", referencedColumnName = "id")
     private Priority priority;
