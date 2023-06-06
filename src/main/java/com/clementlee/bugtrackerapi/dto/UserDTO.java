@@ -27,6 +27,8 @@ public class UserDTO {
 
     private Role role;
 
-    private List<Project> projects;
+    private List<Project> projectsInvolved;
+
+    private List<Project> projectsCreated;
 
 }

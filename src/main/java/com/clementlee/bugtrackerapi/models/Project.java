@@ -33,13 +33,27 @@ public class Project {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    @JsonBackReference(value = "users-projects")
-    @ManyToOne
-    @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
-    private UserEntity user;
+    @JsonBackReference(value = "users-projects-involved")
+    @ManyToMany
+    @JoinTable(
+            name = "users_projects_involved",
+            joinColumns = @JoinColumn(name = "fk_users_id_involved", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_projects_id_involved", referencedColumnName = "id")
+    )
+    private List<UserEntity> usersInvolved;
 
-    @JsonIgnore // Skip "issues" field when serializing "Project" object into JSON (avoid infinite recursion in bidirectional relationships)
-    @OneToMany(mappedBy = "project")
-    private List<Issue> issues;
+    @JsonBackReference(value = "users-projects-created")
+    @ManyToOne
+    @JoinColumn(name = "fk_users_id_created", referencedColumnName = "id")
+    private UserEntity userCreated;
+
+
+
+
+
+
+//    @JsonIgnore // Skip "issues" field when serializing "Project" object into JSON (avoid infinite recursion in bidirectional relationships)
+//    @OneToMany(mappedBy = "project")
+//    private List<Issue> issues;
 
 }

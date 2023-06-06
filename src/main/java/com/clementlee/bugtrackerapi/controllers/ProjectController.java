@@ -81,4 +81,12 @@ public class ProjectController {
     }
 
 
+
+
+    @PutMapping("project/{projectId}/add-user/user/{userId}")
+    public ResponseEntity<ProjectDTO> addUserIntoProject(@PathVariable(value = "projectId") int projectId,
+                                                         @PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(projectServiceImpl.addUserIntoProject(projectId, userId), HttpStatus.OK);
+    }
+
 }

@@ -24,17 +24,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        final String defaultRoleName = "MEMBER";
+        String defaultRoleName = "MEMBER";
         Role role = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setRole(role); // Assign "MEMBER" as default role for new user
         UserEntity newUser = userRepository.save(userEntity);
+
         role.getUsers().add(newUser);
         roleRepository.save(role);
+
         return mapToUserDto(newUser);
     }
 
@@ -112,7 +115,8 @@ public class UserServiceImpl implements UserService {
         userDTO.setPassword(userEntity.getPassword());
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setRole(userEntity.getRole());
-        userDTO.setProjects(userEntity.getProjects());
+        userDTO.setProjectsInvolved(userEntity.getProjectsInvolved());
+        userDTO.setProjectsCreated(userEntity.getProjectsCreated());
         return userDTO;
     }
 

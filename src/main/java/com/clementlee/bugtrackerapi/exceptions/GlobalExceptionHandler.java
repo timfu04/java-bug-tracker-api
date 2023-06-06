@@ -109,6 +109,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles issue not found exception
+    @ExceptionHandler(IssueNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueNotFoundException(IssueNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles duplicate user in project exception
+    @ExceptionHandler(DuplicateUserInProjectException.class)
+    public ResponseEntity<ExceptionResponse> handleDuplicateUserInProjectException(DuplicateUserInProjectException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
     // Create exception response
     private ExceptionResponse createExceptionResponse(int statusCode, String message, LocalDateTime timestamp){
         ExceptionResponse response = new ExceptionResponse();

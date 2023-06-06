@@ -1,6 +1,7 @@
 package com.clementlee.bugtrackerapi.services.impl;
 
 import com.clementlee.bugtrackerapi.dto.ProjectDTO;
+import com.clementlee.bugtrackerapi.exceptions.DuplicateUserInProjectException;
 import com.clementlee.bugtrackerapi.exceptions.ProjectNotFoundException;
 import com.clementlee.bugtrackerapi.exceptions.UserNotFoundException;
 import com.clementlee.bugtrackerapi.models.Project;
@@ -14,6 +15,8 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,21 +31,26 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO createProjectByUserId(int userId, ProjectDTO projectDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+
         Project project = new Project();
         project.setName(projectDTO.getName());
         project.setDescription((projectDTO.getDescription()));
         project.setStartDate(LocalDate.parse(projectDTO.getStartDate(), formatter)); // Convert String to LocalDate
         project.setEndDate(LocalDate.parse(projectDTO.getEndDate(), formatter)); // Convert String to LocalDate
-        project.setUser(userEntity);
+        project.setUsersInvolved(Arrays.asList(userEntity));
+        project.setUserCreated(userEntity);
         Project newProject = projectRepository.save(project);
-        userEntity.getProjects().add(newProject);
+
+        userEntity.getProjectsInvolved().add(newProject);
+        userEntity.getProjectsCreated().add(newProject);
         userRepository.save(userEntity);
+
         return mapToProjectDto(newProject);
     }
 
     @Override
     public List<ProjectDTO> getAllProjectsByUserId(int userId) {
-        List<Project> projects = projectRepository.findByUserId(userId);
+        List<Project> projects = projectRepository.findByUserCreatedId(userId);
         if (projects.isEmpty()){
             throw new ProjectNotFoundException("Project could not be found");
         }
@@ -54,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO getProjectByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getId() != project.getUser().getId()){
+        if (userEntity.getId() != project.getUserCreated().getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
         return mapToProjectDto(project);
@@ -64,7 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO updateProjectFullByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getId() != project.getUser().getId()){
+        if (userEntity.getId() != project.getUserCreated().getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
@@ -80,7 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO updateProjectPartialByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getId() != project.getUser().getId()){
+        if (userEntity.getId() != project.getUserCreated().getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
@@ -104,7 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProjectByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getId() != project.getUser().getId()){
+        if (userEntity.getId() != project.getUserCreated().getId()){
             throw new ProjectNotFoundException("Project could not be found");
         }
         projectRepository.deleteById(projectId);
@@ -155,16 +163,45 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteById(projectId);
     }
 
+    @Override
+    public ProjectDTO addUserIntoProject(int projectId, int userId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+
+        // Get list of user involved ids from project
+        List<Integer> userInvolvedIds = project.getUsersInvolved().stream().map(user -> user.getId()).collect(Collectors.toList());
+        if (userInvolvedIds.contains(userEntity.getId())){
+            throw new DuplicateUserInProjectException("User already exist in this project");
+        }
+
+        project.getUsersInvolved().add(userEntity);
+        Project newProject = projectRepository.save(project);
+
+        userEntity.getProjectsInvolved().add(newProject);
+        userRepository.save(userEntity);
+
+        return mapToProjectDto(newProject);
+    }
+
+    @Override
+    public void removeUserFromProject(int projectId, int userId) {
+
+    }
+
+
     // Map Project to ProjectDTO
     private ProjectDTO mapToProjectDto(Project project){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(project.getId());
         projectDTO.setName(project.getName());
         projectDTO.setDescription(project.getDescription());
         projectDTO.setStartDate(project.getStartDate().format(formatter)); // convert LocalDate into String
         projectDTO.setEndDate(project.getEndDate().format(formatter)); // convert LocalDate into String
-        projectDTO.setUser(project.getUser());
+        projectDTO.setUsersInvolved(project.getUsersInvolved());
+        projectDTO.setUserCreated(project.getUserCreated());
+
         return projectDTO;
     }
 

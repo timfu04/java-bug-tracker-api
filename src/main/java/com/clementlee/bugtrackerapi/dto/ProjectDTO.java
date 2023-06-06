@@ -7,6 +7,8 @@ import com.clementlee.bugtrackerapi.validation.annotations.ValidateProjectDate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @ValidateProjectDate(groups = {ProjectAllFieldsValidationGroup.class, ProjectDateValidationGroup.class})
 public class ProjectDTO {
@@ -25,6 +27,8 @@ public class ProjectDTO {
     @NotBlank(message = "Invalid end date: Empty end date", groups = {ProjectAllFieldsValidationGroup.class})
     private String endDate;
 
-    private UserEntity user;
+    private List<UserEntity> usersInvolved;
+
+    private UserEntity userCreated;
 
 }
