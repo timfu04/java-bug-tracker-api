@@ -117,6 +117,8 @@ public class UserServiceImpl implements UserService {
         userDTO.setRole(userEntity.getRole());
         userDTO.setProjectsInvolved(userEntity.getProjectsInvolved());
         userDTO.setProjectsCreated(userEntity.getProjectsCreated());
+        userDTO.setIssuesReported(userEntity.getIssuesReported());
+        userDTO.setIssuesAssigned(userEntity.getIssuesAssigned());
         return userDTO;
     }
 

@@ -1,9 +1,10 @@
 package com.clementlee.bugtrackerapi.dto;
 
+import com.clementlee.bugtrackerapi.models.Issue;
 import com.clementlee.bugtrackerapi.models.Project;
 import com.clementlee.bugtrackerapi.models.Role;
-import com.clementlee.bugtrackerapi.validation.markerinterface.UserAllFieldsValidationGroup;
-import com.clementlee.bugtrackerapi.validation.markerinterface.UserEmailValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterfaces.UserAllFieldsValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterfaces.UserEmailValidationGroup;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -30,5 +31,9 @@ public class UserDTO {
     private List<Project> projectsInvolved;
 
     private List<Project> projectsCreated;
+
+    private List<Issue> issuesReported;
+
+    private List<Issue> issuesAssigned;
 
 }

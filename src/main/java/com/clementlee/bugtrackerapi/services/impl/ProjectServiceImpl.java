@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -167,41 +166,45 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO addUserIntoProject(int projectId, int userId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-
         // Get list of user involved ids from project
         List<Integer> userInvolvedIds = project.getUsersInvolved().stream().map(user -> user.getId()).collect(Collectors.toList());
         if (userInvolvedIds.contains(userEntity.getId())){
             throw new DuplicateUserInProjectException("User already exist in this project");
         }
-
         project.getUsersInvolved().add(userEntity);
         Project newProject = projectRepository.save(project);
-
         userEntity.getProjectsInvolved().add(newProject);
         userRepository.save(userEntity);
-
         return mapToProjectDto(newProject);
     }
 
     @Override
     public void removeUserFromProject(int projectId, int userId) {
-
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        // Get list of user involved ids from project
+        List<Integer> userInvolvedIds = project.getUsersInvolved().stream().map(user -> user.getId()).collect(Collectors.toList());
+        if (userInvolvedIds.contains(userEntity.getId())){ // If list of user involved ids contains given user id
+            List<UserEntity> usersInvolved = project.getUsersInvolved();
+            usersInvolved.remove(userInvolvedIds.indexOf(userEntity.getId())); // Remove user based on user id from the current user involved list
+            project.setUsersInvolved(usersInvolved);
+            projectRepository.save(project);
+        }else {
+            throw new UserNotFoundException("User could not be found in this project");
+        }
     }
-
 
     // Map Project to ProjectDTO
     private ProjectDTO mapToProjectDto(Project project){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
-
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(project.getId());
         projectDTO.setName(project.getName());
         projectDTO.setDescription(project.getDescription());
-        projectDTO.setStartDate(project.getStartDate().format(formatter)); // convert LocalDate into String
-        projectDTO.setEndDate(project.getEndDate().format(formatter)); // convert LocalDate into String
+        projectDTO.setStartDate(project.getStartDate().format(formatter)); // Convert LocalDate into String
+        projectDTO.setEndDate(project.getEndDate().format(formatter)); // Convert LocalDate into String
         projectDTO.setUsersInvolved(project.getUsersInvolved());
         projectDTO.setUserCreated(project.getUserCreated());
-
         return projectDTO;
     }
 

@@ -2,8 +2,8 @@ package com.clementlee.bugtrackerapi.controllers;
 
 import com.clementlee.bugtrackerapi.dto.ProjectDTO;
 import com.clementlee.bugtrackerapi.services.impl.ProjectServiceImpl;
-import com.clementlee.bugtrackerapi.validation.markerinterface.ProjectAllFieldsValidationGroup;
-import com.clementlee.bugtrackerapi.validation.markerinterface.ProjectDateValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterfaces.ProjectAllFieldsValidationGroup;
+import com.clementlee.bugtrackerapi.validation.markerinterfaces.ProjectDateValidationGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,13 +80,17 @@ public class ProjectController {
         return ResponseEntity.ok("Project deleted successfully");
     }
 
-
-
-
     @PutMapping("project/{projectId}/add-user/user/{userId}")
     public ResponseEntity<ProjectDTO> addUserIntoProject(@PathVariable(value = "projectId") int projectId,
                                                          @PathVariable(value = "userId") int userId){
         return new ResponseEntity<>(projectServiceImpl.addUserIntoProject(projectId, userId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("project/{projectId}/remove-user/user/{userId}")
+    public ResponseEntity<String> removeUserFromProject(@PathVariable(value = "projectId") int projectId,
+                                                        @PathVariable(value = "userId") int userId){
+        projectServiceImpl.removeUserFromProject(projectId, userId);
+        return new ResponseEntity<>("User removed from project successfully", HttpStatus.OK);
     }
 
 }

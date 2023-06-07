@@ -16,8 +16,6 @@ public interface ProjectService {
     ProjectDTO updateProjectFullByProjectId(int projectId, ProjectDTO projectDTO);
     ProjectDTO updateProjectPartialByProjectId(int projectId, ProjectDTO projectDTO);
     void deleteProjectByProjectId(int projectId);
-
-
     ProjectDTO addUserIntoProject(int projectId, int userId);
     void removeUserFromProject(int projectId, int userId);
 

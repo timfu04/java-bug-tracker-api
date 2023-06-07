@@ -42,22 +42,12 @@ public class UserEntity {
     @OneToMany(mappedBy = "userCreated")
     private List<Project> projectsCreated;
 
+    @JsonIgnore // Skip "reportedIssues" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
+    @OneToMany(mappedBy = "userReported")
+    private List<Issue> issuesReported;
 
-
-
-
-//
-//
-//
-//
-//
-//    @JsonIgnore // Skip "reportedIssues" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
-//    @OneToMany(mappedBy = "userReported")
-//    private List<Issue> reportedIssues;
-//
-//
-//    @JsonIgnore // Skip "assignedIssues" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
-//    @ManyToMany(mappedBy = "usersAssigned")
-//    private List<Issue> assignedIssues;
+    @JsonIgnore // Skip "assignedIssues" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
+    @ManyToMany(mappedBy = "usersAssigned")
+    private List<Issue> issuesAssigned;
 
 }

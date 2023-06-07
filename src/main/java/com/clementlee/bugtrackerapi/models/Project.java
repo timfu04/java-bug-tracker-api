@@ -47,13 +47,8 @@ public class Project {
     @JoinColumn(name = "fk_users_id_created", referencedColumnName = "id")
     private UserEntity userCreated;
 
-
-
-
-
-
-//    @JsonIgnore // Skip "issues" field when serializing "Project" object into JSON (avoid infinite recursion in bidirectional relationships)
-//    @OneToMany(mappedBy = "project")
-//    private List<Issue> issues;
+    @JsonIgnore // Skip "issues" field when serializing "Project" object into JSON (avoid infinite recursion in bidirectional relationships)
+    @OneToMany(mappedBy = "project")
+    private List<Issue> issues;
 
 }
