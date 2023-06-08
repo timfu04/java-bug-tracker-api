@@ -26,14 +26,14 @@ public class ProjectController {
     }
 
     @GetMapping("user/{userId}/project")
-    public ResponseEntity<List<ProjectDTO>> getAllProjectsByUserId(@PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(projectServiceImpl.getAllProjectsByUserId(userId), HttpStatus.OK);
+    public ResponseEntity<List<ProjectDTO>> getAllProjectsCreatedByUserId(@PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(projectServiceImpl.getAllProjectsCreatedByUserId(userId), HttpStatus.OK);
     }
 
     @GetMapping("user/{userId}/project/{projectId}")
-    public ResponseEntity<ProjectDTO> getProjectByUserIdByProjectId(@PathVariable(value = "userId") int userId,
+    public ResponseEntity<ProjectDTO> getProjectCreatedByUserIdByProjectId(@PathVariable(value = "userId") int userId,
                                                                     @PathVariable(value = "projectId") int projectId){
-        return new ResponseEntity<>(projectServiceImpl.getProjectByUserIdByProjectId(userId, projectId), HttpStatus.OK);
+        return new ResponseEntity<>(projectServiceImpl.getProjectCreatedByUserIdByProjectId(userId, projectId), HttpStatus.OK);
     }
 
     @PutMapping("user/{userId}/project/{projectId}/update-full")
@@ -60,6 +60,11 @@ public class ProjectController {
     @GetMapping("project")
     public ResponseEntity<List<ProjectDTO>> getAllProjects(){
         return new ResponseEntity<>(projectServiceImpl.getAllProjects(), HttpStatus.OK);
+    }
+
+    @GetMapping("project/{projectId}")
+    public ResponseEntity<ProjectDTO> getProjectByProjectId(@PathVariable(value = "projectId") int projectId){
+        return new ResponseEntity<>(projectServiceImpl.getProjectByProjectId(projectId), HttpStatus.OK);
     }
 
     @PutMapping("project/{projectId}/update-full")

@@ -48,7 +48,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectDTO> getAllProjectsByUserId(int userId) {
+    public List<ProjectDTO> getAllProjectsCreatedByUserId(int userId) {
         List<Project> projects = projectRepository.findByUserCreatedId(userId);
         if (projects.isEmpty()){
             throw new ProjectNotFoundException("Project could not be found");
@@ -58,7 +58,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO getProjectByUserIdByProjectId(int userId, int projectId) {
+    public ProjectDTO getProjectCreatedByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         if (userEntity.getId() != project.getUserCreated().getId()){
@@ -122,6 +122,12 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projects = projectRepository.findAll();
         // Convert list of Project to list of ProjectDTO
         return projects.stream().map(project -> mapToProjectDto(project)).collect(Collectors.toList());
+    }
+
+    @Override
+    public ProjectDTO getProjectByProjectId(int projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        return mapToProjectDto(project);
     }
 
     @Override
