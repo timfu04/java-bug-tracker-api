@@ -17,12 +17,22 @@ import java.util.stream.Collectors;
 @RestControllerAdvice // An interceptor of exceptions thrown by methods annotated with @RequestMapping
 public class GlobalExceptionHandler {
 
-    // Handles role not found exception
+    // Handles RoleNotFoundException
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleRoleNotFoundException(RoleNotFoundException ex) {
         ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
+
+    // Handles UserNotFoundException
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+
+
 
     // Handles validation exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -74,12 +84,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-    // Handles user not found exception
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleUserNotFoundException(UserNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
+
 
     // Handles project not found exception
     @ExceptionHandler(ProjectNotFoundException.class)

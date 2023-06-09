@@ -36,12 +36,6 @@ public class UserController {
         return new ResponseEntity<>(userServiceImpl.getUserByUserId(userId), HttpStatus.OK);
     }
 
-    @PutMapping("user/{userId}/update-full")
-    public ResponseEntity<UserDTO> updateUserFullByUserId(@PathVariable(value = "userId") int userId,
-                                                          @Validated(UserAllFieldsValidationGroup.class) @RequestBody UserDTO userDTO){
-        return new ResponseEntity<>(userServiceImpl.updateUserFullByUserId(userId, userDTO), HttpStatus.OK);
-    }
-
     @PatchMapping("user/{userId}/update-partial")
     public ResponseEntity<UserDTO> updateUserPartialByUserId(@PathVariable(value = "userId") int userId,
                                                              @Validated(UserEmailValidationGroup.class) @RequestBody UserDTO userDTO){

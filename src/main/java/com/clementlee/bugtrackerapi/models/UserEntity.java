@@ -31,7 +31,7 @@ public class UserEntity {
 
     @JsonBackReference(value = "roles-users")
     @ManyToOne
-    @JoinColumn(name = "fk_roles_id", referencedColumnName = "id")
+    @JoinColumn(name = "fk_roles_id", referencedColumnName = "id", nullable = false)
     private Role role;
 
     @JsonIgnore // Skip "projectsInvolved" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
@@ -42,15 +42,15 @@ public class UserEntity {
     @OneToMany(mappedBy = "userCreated")
     private List<Project> projectsCreated;
 
-    @JsonIgnore // Skip "reportedIssues" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
+    @JsonIgnore // Skip "issuesReported" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
     @OneToMany(mappedBy = "userReported")
     private List<Issue> issuesReported;
 
-    @JsonIgnore // Skip "assignedIssues" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
+    @JsonIgnore // Skip "issuesAssigned" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
     @ManyToMany(mappedBy = "usersAssigned")
     private List<Issue> issuesAssigned;
 
-    @JsonIgnore
+    @JsonIgnore // Skip "issueComments" field when serializing "UserEntity" object into JSON (avoid infinite recursion in bidirectional relationships)
     @OneToMany(mappedBy = "user")
     private List<IssueComment> issueComments;
 

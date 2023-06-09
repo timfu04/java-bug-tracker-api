@@ -24,20 +24,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        String defaultRoleName = "MEMBER";
+        final String defaultRoleName = "MEMBER";
         Role role = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setRole(role); // Assign "MEMBER" as default role for new user
         UserEntity newUser = userRepository.save(userEntity);
-
         role.getUsers().add(newUser);
         roleRepository.save(role);
-
         return mapToUserDto(newUser);
     }
 
@@ -51,16 +48,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         return mapToUserDto(userEntity);
-    }
-
-    @Override
-    public UserDTO updateUserFullByUserId(int userId, UserDTO userDTO) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        userEntity.setUsername(userDTO.getUsername());
-        userEntity.setPassword(userDTO.getPassword());
-        userEntity.setEmail(userDTO.getEmail());
-        UserEntity updatedUser = userRepository.save(userEntity);
-        return mapToUserDto(updatedUser);
     }
 
     @Override
@@ -95,7 +82,7 @@ public class UserServiceImpl implements UserService {
         return mapToUserDto(updatedUser);
     }
 
-    // Set default role
+    // Revoke and set to default role (MEMBER)
     @Override
     public UserDTO revokeRoleByUserId(int userId) {
         final String defaultRoleName = "MEMBER";

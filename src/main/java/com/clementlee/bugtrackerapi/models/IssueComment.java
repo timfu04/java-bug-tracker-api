@@ -25,12 +25,12 @@ public class IssueComment {
 
     private LocalDateTime updatedDate;
 
-    @JsonBackReference
+    @JsonBackReference(value = "users-issue_comments")
     @ManyToOne
     @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
     private UserEntity user;
 
-    @JsonBackReference
+    @JsonBackReference(value = "issues-issue_comments")
     @ManyToOne
     @JoinColumn(name = "fk_issues_id", referencedColumnName = "id")
     private Issue issue;

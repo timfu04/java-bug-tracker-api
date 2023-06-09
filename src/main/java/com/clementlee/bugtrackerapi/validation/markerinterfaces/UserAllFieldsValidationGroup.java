@@ -1,5 +1,5 @@
 package com.clementlee.bugtrackerapi.validation.markerinterfaces;
 
 public interface UserAllFieldsValidationGroup {
-    // Marker interface for user fields validation group
+    // Marker interface for all user fields validation group
 }
