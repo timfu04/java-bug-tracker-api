@@ -50,4 +50,8 @@ public class UserEntity {
     @ManyToMany(mappedBy = "usersAssigned")
     private List<Issue> issuesAssigned;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<IssueComment> issueComments;
+
 }

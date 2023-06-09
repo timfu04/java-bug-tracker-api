@@ -1,6 +1,7 @@
 package com.clementlee.bugtrackerapi.dto;
 
 import com.clementlee.bugtrackerapi.models.Issue;
+import com.clementlee.bugtrackerapi.models.IssueComment;
 import com.clementlee.bugtrackerapi.models.Project;
 import com.clementlee.bugtrackerapi.models.Role;
 import com.clementlee.bugtrackerapi.validation.markerinterfaces.UserAllFieldsValidationGroup;
@@ -35,5 +36,7 @@ public class UserDTO {
     private List<Issue> issuesReported;
 
     private List<Issue> issuesAssigned;
+
+    private List<IssueComment> issueComments;
 
 }

@@ -345,6 +345,7 @@ public class IssueServiceImpl implements IssueService {
         issueDTO.setPriority(issue.getPriority());
         issueDTO.setUserReported(issue.getUserReported());
         issueDTO.setUsersAssigned(issue.getUsersAssigned());
+        issueDTO.setIssueComments(issue.getIssueComments());
         return issueDTO;
     }
 

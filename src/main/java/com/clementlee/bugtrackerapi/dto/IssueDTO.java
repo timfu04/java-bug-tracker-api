@@ -22,5 +22,6 @@ public class IssueDTO {
     private Priority priority;
     private UserEntity userReported;
     private List<UserEntity> usersAssigned;
+    private List<IssueComment> issueComments;
 
 }

@@ -123,6 +123,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
+    // Handles issue comment not found exception
+    @ExceptionHandler(IssueCommentNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueCommentNotFoundException(IssueCommentNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
     // Create exception response
     private ExceptionResponse createExceptionResponse(int statusCode, String message, LocalDateTime timestamp){
         ExceptionResponse response = new ExceptionResponse();

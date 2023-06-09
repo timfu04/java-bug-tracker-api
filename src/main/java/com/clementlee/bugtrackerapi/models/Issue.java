@@ -1,6 +1,7 @@
 package com.clementlee.bugtrackerapi.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -66,5 +67,9 @@ public class Issue {
             inverseJoinColumns = @JoinColumn(name = "fk_issues_id_assigned", referencedColumnName = "id")
     )
     private List<UserEntity> usersAssigned;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "issue")
+    private List<IssueComment> issueComments;
 
 }
