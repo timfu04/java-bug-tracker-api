@@ -1,5 +1,6 @@
 package com.clementlee.bugtrackerapi.dto;
 
+import com.clementlee.bugtrackerapi.models.Issue;
 import com.clementlee.bugtrackerapi.models.UserEntity;
 import com.clementlee.bugtrackerapi.validation.markerinterfaces.ProjectAllFieldsValidationGroup;
 import com.clementlee.bugtrackerapi.validation.markerinterfaces.ProjectDateValidationGroup;
@@ -28,7 +29,7 @@ public class ProjectDTO {
     private String endDate;
 
     private List<UserEntity> usersInvolved;
-
     private UserEntity userCreated;
+    private List<Issue> issues;
 
 }

@@ -36,13 +36,6 @@ public class ProjectController {
         return new ResponseEntity<>(projectServiceImpl.getProjectCreatedByUserIdByProjectId(userId, projectId), HttpStatus.OK);
     }
 
-    @PutMapping("user/{userId}/project/{projectId}/update-full")
-    public ResponseEntity<ProjectDTO> updateProjectFullByUserIdByProjectId(@PathVariable(value = "userId") int userId,
-                                                                           @PathVariable(value = "projectId") int projectId,
-                                                                           @Validated(ProjectAllFieldsValidationGroup.class) @RequestBody ProjectDTO projectDTO){
-        return new ResponseEntity<>(projectServiceImpl.updateProjectFullByUserIdByProjectId(userId, projectId, projectDTO), HttpStatus.OK);
-    }
-
     @PatchMapping("user/{userId}/project/{projectId}/update-partial")
     public ResponseEntity<ProjectDTO> updateProjectPartialByUserIdByProjectId(@PathVariable(value = "userId") int userId,
                                                                               @PathVariable(value = "projectId") int projectId,
@@ -57,6 +50,21 @@ public class ProjectController {
         return ResponseEntity.ok("Project deleted successfully");
     }
 
+    @PutMapping("user/{userCreatorId}/project/{projectId}/add-user/user/{userIdToAdd}")
+    public ResponseEntity<ProjectDTO> addUserIntoProjectByUserIdByProjectId(@PathVariable(value = "userCreatorId") int userCreatorId,
+                                                                            @PathVariable(value = "projectId") int projectId,
+                                                                            @PathVariable(value = "userIdToAdd") int userIdToAdd){
+        return new ResponseEntity<>(projectServiceImpl.addUserIntoProjectByUserIdByProjectId(userCreatorId, projectId, userIdToAdd), HttpStatus.OK);
+    }
+
+    @DeleteMapping("user/{userCreatorId}/project/{projectId}/remove-user/user/{userIdToRemove}")
+    public ResponseEntity<String> removeUserFromProjectByUserIdByProjectId(@PathVariable(value = "userCreatorId") int userCreatorId,
+                                                                            @PathVariable(value = "projectId") int projectId,
+                                                                            @PathVariable(value = "userIdToRemove") int userIdToRemove){
+        projectServiceImpl.removeUserFromProjectByUserIdByProjectId(userCreatorId, projectId, userIdToRemove);
+        return new ResponseEntity<>("User removed from project successfully", HttpStatus.OK);
+    }
+
     @GetMapping("project")
     public ResponseEntity<List<ProjectDTO>> getAllProjects(){
         return new ResponseEntity<>(projectServiceImpl.getAllProjects(), HttpStatus.OK);
@@ -65,12 +73,6 @@ public class ProjectController {
     @GetMapping("project/{projectId}")
     public ResponseEntity<ProjectDTO> getProjectByProjectId(@PathVariable(value = "projectId") int projectId){
         return new ResponseEntity<>(projectServiceImpl.getProjectByProjectId(projectId), HttpStatus.OK);
-    }
-
-    @PutMapping("project/{projectId}/update-full")
-    public ResponseEntity<ProjectDTO> updateProjectFullByProjectId(@PathVariable(value = "projectId") int projectId,
-                                                                   @Validated(ProjectAllFieldsValidationGroup.class) @RequestBody ProjectDTO projectDTO){
-        return new ResponseEntity<>(projectServiceImpl.updateProjectFullByProjectId(projectId, projectDTO), HttpStatus.OK);
     }
 
     @PatchMapping("project/{projectId}/update-partial")

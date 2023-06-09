@@ -27,14 +27,17 @@ public class UserServiceImpl implements UserService {
         final String defaultRoleName = "MEMBER";
         Role role = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setRole(role); // Assign "MEMBER" as default role for new user
         UserEntity newUser = userRepository.save(userEntity);
+
         role.getUsers().add(newUser);
         roleRepository.save(role);
+
         return mapToUserDto(newUser);
     }
 
