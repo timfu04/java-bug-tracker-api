@@ -30,7 +30,6 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO createProjectByUserId(int userId, ProjectDTO projectDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu"); // "uuuu" means year with 4 digits
-
         Project project = new Project();
         project.setName(projectDTO.getName());
         project.setDescription((projectDTO.getDescription()));
@@ -39,20 +38,16 @@ public class ProjectServiceImpl implements ProjectService {
         project.setUsersInvolved(Arrays.asList(userEntity));
         project.setUserCreated(userEntity);
         Project newProject = projectRepository.save(project);
-
-        userEntity.getProjectsInvolved().add(newProject);
-        userEntity.getProjectsCreated().add(newProject);
-        userRepository.save(userEntity);
-
         return mapToProjectDto(newProject);
     }
 
     @Override
     public List<ProjectDTO> getAllProjectsCreatedByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        if (userEntity.getProjectsCreated().isEmpty()){
+        if (userEntity.getProjectsCreated().isEmpty()){ // If list of projects created from user is empty
             throw new ProjectNotFoundException("Project could not be found");
         }
+        // Convert list of UserEntity to list of UserDTO
         return userEntity.getProjectsCreated().stream().map(project -> mapToProjectDto(project)).collect(Collectors.toList());
     }
 
@@ -108,12 +103,11 @@ public class ProjectServiceImpl implements ProjectService {
         UserEntity userCreator = userRepository.findById(userCreatorId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         UserEntity userToAdd = userRepository.findById(userIdToAdd).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+
         if (userCreator.getProjectsCreated().contains(project)) { // If list of projects created from user contains given project
             if (!project.getUsersInvolved().contains(userToAdd)) { // If list of user involved from project does not contain user to add
                 project.getUsersInvolved().add(userToAdd);
                 Project updatedProject = projectRepository.save(project);
-                userToAdd.getProjectsInvolved().add(project);
-                userRepository.save(userToAdd);
                 return mapToProjectDto(updatedProject);
             } else {
                 throw new DuplicateUserInProjectException("User already exist in project");
@@ -128,12 +122,11 @@ public class ProjectServiceImpl implements ProjectService {
         UserEntity userCreator = userRepository.findById(userCreatorId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         UserEntity userToRemove = userRepository.findById(userIdToRemove).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+
         if (userCreator.getProjectsCreated().contains(project)){ // If list of projects created from user contains given project
             if (project.getUsersInvolved().contains(userToRemove)){ // If list of user involved from project contain given user
                 project.getUsersInvolved().remove(userToRemove);
                 projectRepository.save(project);
-                userToRemove.getProjectsInvolved().remove(project);
-                userRepository.save(userToRemove);
             } else {
                 throw new UserNotFoundException("User could not be found");
             }
@@ -188,8 +181,6 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getUsersInvolved().contains(userEntity)){ // If list of user involved from project does not contain given user
             project.getUsersInvolved().add(userEntity);
             Project updatedProject = projectRepository.save(project);
-            userEntity.getProjectsInvolved().add(updatedProject);
-            userRepository.save(userEntity);
             return mapToProjectDto(updatedProject);
         } else {
             throw new DuplicateUserInProjectException("User already exist in this project");
@@ -200,11 +191,9 @@ public class ProjectServiceImpl implements ProjectService {
     public void removeUserFromProject(int projectId, int userId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        if (project.getUsersInvolved().contains(userEntity)){
+        if (project.getUsersInvolved().contains(userEntity)){ // If list of user involved from project contain given user
             project.getUsersInvolved().remove(userEntity);
             projectRepository.save(project);
-            userEntity.getProjectsInvolved().remove(project);
-            userRepository.save(userEntity);
         } else {
             throw new UserNotFoundException("User could not be found");
         }

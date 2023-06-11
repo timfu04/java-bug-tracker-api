@@ -31,6 +31,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles ProjectNotFoundException
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleProjectNotFoundException(ProjectNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
 
 
 
@@ -86,12 +93,7 @@ public class GlobalExceptionHandler {
 
 
 
-    // Handles project not found exception
-    @ExceptionHandler(ProjectNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleProjectNotFoundException(ProjectNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
+
 
     // Handles status not found exception
     @ExceptionHandler(StatusNotFoundException.class)

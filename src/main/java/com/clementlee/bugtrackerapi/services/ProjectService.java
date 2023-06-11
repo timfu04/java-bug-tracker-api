@@ -9,6 +9,7 @@ public interface ProjectService {
     ProjectDTO createProjectByUserId(int userId, ProjectDTO projectDTO);
     List<ProjectDTO> getAllProjectsCreatedByUserId(int userId);
     ProjectDTO getProjectCreatedByUserIdByProjectId(int userId, int projectId);
+    // Update name or description or start date or end date or all of them
     ProjectDTO updateProjectPartialByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO);
     void deleteProjectByUserIdByProjectId(int userId, int projectId);
     ProjectDTO addUserIntoProjectByUserIdByProjectId(int userCreatorId, int projectId, int userIdToAdd);

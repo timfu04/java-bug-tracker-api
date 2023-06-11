@@ -37,14 +37,14 @@ public class Project {
     @ManyToMany
     @JoinTable(
             name = "users_projects_involved",
-            joinColumns = @JoinColumn(name = "fk_users_id_involved", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_projects_id_involved", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "fk_users_id_involved", referencedColumnName = "id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "fk_projects_id_involved", referencedColumnName = "id", nullable = false)
     )
     private List<UserEntity> usersInvolved;
 
     @JsonBackReference(value = "users-projects-created")
     @ManyToOne
-    @JoinColumn(name = "fk_users_id_created", referencedColumnName = "id")
+    @JoinColumn(name = "fk_users_id_created", referencedColumnName = "id", nullable = false)
     private UserEntity userCreated;
 
     @JsonIgnore // Skip "issues" field when serializing "Project" object into JSON (avoid infinite recursion in bidirectional relationships)

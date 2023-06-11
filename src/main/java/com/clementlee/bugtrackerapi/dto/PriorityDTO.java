@@ -1,7 +1,7 @@
 package com.clementlee.bugtrackerapi.dto;
 
 import com.clementlee.bugtrackerapi.models.Issue;
-import com.clementlee.bugtrackerapi.validation.annotations.Uppercase;
+import com.clementlee.bugtrackerapi.validation.annotations.ValidateUppercase;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ public class PriorityDTO {
     private int id;
 
     @NotBlank(message = "Invalid name: Empty name")
-    @Uppercase(message = "Invalid name: Name must be in uppercase")
+    @ValidateUppercase(message = "Invalid name: Name must be in uppercase")
     private String name;
 
     private List<Issue> issues;

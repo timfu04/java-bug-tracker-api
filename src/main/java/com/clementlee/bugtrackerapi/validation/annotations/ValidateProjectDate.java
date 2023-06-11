@@ -6,8 +6,8 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE}) // Class level declaration
+@Retention(RetentionPolicy.RUNTIME) // Implement on runtime level
 @Documented
 @Constraint(validatedBy = ProjectDateValidator.class)
 public @interface ValidateProjectDate {

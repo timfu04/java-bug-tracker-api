@@ -27,17 +27,12 @@ public class UserServiceImpl implements UserService {
         final String defaultRoleName = "MEMBER";
         Role role = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setRole(role); // Assign "MEMBER" as default role for new user
         UserEntity newUser = userRepository.save(userEntity);
-
-        role.getUsers().add(newUser);
-        roleRepository.save(role);
-
         return mapToUserDto(newUser);
     }
 
@@ -78,46 +73,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateRoleByUserIdByRoleName(int userId, String roleName) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        Role roleToUpdate = roleRepository.findByName(roleName.toUpperCase())
+        Role newRole = roleRepository.findByName(roleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-
-        final String roleNameToRemove = userEntity.getRole().getName(); // Get current role name
-        Role roleToRemove = roleRepository.findByName(roleNameToRemove.toUpperCase())
-                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-
-        roleToRemove.getUsers().remove(userEntity); // Remove user from current role list
-        roleRepository.save(roleToRemove);
-
-        userEntity.setRole(roleToUpdate); // Set new role for user
+        userEntity.setRole(newRole);
         UserEntity updatedUser = userRepository.save(userEntity);
-
-        roleToUpdate.getUsers().add(updatedUser); // Add user into new role list
-        roleRepository.save(roleToUpdate);
-
         return mapToUserDto(updatedUser);
     }
 
-    // Revoke and set to default role (MEMBER)
+    // Set to default role (MEMBER)
     @Override
     public UserDTO revokeRoleByUserId(int userId) {
         final String defaultRoleName = "MEMBER";
-        Role roleToUpdate = roleRepository.findByName(defaultRoleName.toUpperCase())
+        Role newRole = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-
-        final String roleNameToRemove = userEntity.getRole().getName(); // Get current role name
-        Role roleToRemove = roleRepository.findByName(roleNameToRemove.toUpperCase())
-                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-
-        roleToRemove.getUsers().remove(userEntity); // Remove user from current role list
-        roleRepository.save(roleToRemove);
-
-        userEntity.setRole(roleToUpdate); // Set new role for user
+        userEntity.setRole(newRole);
         UserEntity updatedUser = userRepository.save(userEntity);
-
-        roleToUpdate.getUsers().add(updatedUser); // Add user into new role list
-        roleRepository.save(roleToUpdate);
-
         return mapToUserDto(updatedUser);
     }
 

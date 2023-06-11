@@ -7,7 +7,7 @@ import java.util.List;
 public interface IssueService {
 
     IssueDTO createIssueByUserIdByProjectId(int userId, int projectId, IssueDTO issueDTO);
-    List<IssueDTO> getAllIssuesByProjectId(int projectId);
+    List<IssueDTO> getAllIssuesByUserIdByProjectId(int userId, int projectId);
     List<IssueDTO> getAllIssuesAssignedByUserId(int userId);
     IssueDTO getIssueByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
     IssueDTO updateIssuePartialByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId, IssueDTO issueDTO);
@@ -18,12 +18,12 @@ public interface IssueService {
     IssueDTO updateIssuePartialByIssueId(int issueId, IssueDTO issueDTO);
     void deleteIssueByIssueId(int issueId);
 
-    IssueDTO updateUpdatedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
-    IssueDTO updateResolvedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
-    IssueDTO updateClosedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
-
-    IssueDTO updateStatusByUserIdByProjectIdByIssueIdByStatusName(int userId, int projectId, int issueId, String statusName);
-    IssueDTO updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(int userId, int projectId, int issueId, String severityName);
-    IssueDTO updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(int userId, int projectId, int issueId, String priorityName);
+//    IssueDTO updateUpdatedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
+//    IssueDTO updateResolvedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
+//    IssueDTO updateClosedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId);
+//
+//    IssueDTO updateStatusByUserIdByProjectIdByIssueIdByStatusName(int userId, int projectId, int issueId, String statusName);
+//    IssueDTO updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(int userId, int projectId, int issueId, String severityName);
+//    IssueDTO updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(int userId, int projectId, int issueId, String priorityName);
 
 }
