@@ -78,10 +78,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateRoleByUserIdByRoleName(int userId, String roleName) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        Role role = roleRepository.findByName(roleName.toUpperCase())
+        Role roleToUpdate = roleRepository.findByName(roleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
-        userEntity.setRole(role);
+
+        final String roleNameToRemove = userEntity.getRole().getName(); // Get current role name
+        Role roleToRemove = roleRepository.findByName(roleNameToRemove.toUpperCase())
+                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+
+        roleToRemove.getUsers().remove(userEntity); // Remove user from current role list
+        roleRepository.save(roleToRemove);
+
+        userEntity.setRole(roleToUpdate); // Set new role for user
         UserEntity updatedUser = userRepository.save(userEntity);
+
+        roleToUpdate.getUsers().add(updatedUser); // Add user into new role list
+        roleRepository.save(roleToUpdate);
+
         return mapToUserDto(updatedUser);
     }
 
@@ -89,11 +101,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO revokeRoleByUserId(int userId) {
         final String defaultRoleName = "MEMBER";
-        Role role = roleRepository.findByName(defaultRoleName.toUpperCase())
+        Role roleToUpdate = roleRepository.findByName(defaultRoleName.toUpperCase())
                 .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        userEntity.setRole(role);
+
+        final String roleNameToRemove = userEntity.getRole().getName(); // Get current role name
+        Role roleToRemove = roleRepository.findByName(roleNameToRemove.toUpperCase())
+                .orElseThrow(() -> new RoleNotFoundException("Role could not be found"));
+
+        roleToRemove.getUsers().remove(userEntity); // Remove user from current role list
+        roleRepository.save(roleToRemove);
+
+        userEntity.setRole(roleToUpdate); // Set new role for user
         UserEntity updatedUser = userRepository.save(userEntity);
+
+        roleToUpdate.getUsers().add(updatedUser); // Add user into new role list
+        roleRepository.save(roleToUpdate);
+
         return mapToUserDto(updatedUser);
     }
 
