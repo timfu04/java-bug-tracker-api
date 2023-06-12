@@ -30,7 +30,7 @@ public class IssueServiceImpl implements IssueService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
 
-        if (project.getUsersInvolved().contains(userEntity)){ // If list of users involved from project contain given user
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
             String defaultStatusName = "OPEN";
             Status status = statusRepository.findByName(defaultStatusName.toUpperCase())
                     .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
@@ -38,6 +38,7 @@ public class IssueServiceImpl implements IssueService {
                     .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
             Priority priority = priorityRepository.findByName(issueDTO.getPriority().getName().toUpperCase())
                     .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
+
             Issue issue = new Issue();
             issue.setTitle(issueDTO.getTitle());
             issue.setDescription(issueDTO.getDescription());
@@ -50,8 +51,9 @@ public class IssueServiceImpl implements IssueService {
             issue.setUsersAssigned(Arrays.asList(userEntity));
             Issue newIssue = issueRepository.save(issue);
             return mapToIssueDto(newIssue);
+
         } else {
-            throw new UserNotFoundException("User could not be found");
+            throw new ProjectNotFoundException("Project could not be found");
         }
     }
 
@@ -59,10 +61,10 @@ public class IssueServiceImpl implements IssueService {
     public List<IssueDTO> getAllIssuesByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (project.getUserCreated().equals(userEntity)){ // If project creator equals given user
+        if (userEntity.getProjectsCreated().contains(project)){ // If user created the project
             return project.getIssues().stream().map(issue -> mapToIssueDto(issue)).collect(Collectors.toList());
         } else {
-            throw new UserNotFoundException("User could not be found");
+            throw new ProjectNotFoundException("Project could not be found");
         }
     }
 
@@ -81,9 +83,13 @@ public class IssueServiceImpl implements IssueService {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                return mapToIssueDto(issue);
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    return mapToIssueDto(issue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
             } else {
                 throw new IssueNotFoundException("Issue could not be found");
             }
@@ -98,56 +104,36 @@ public class IssueServiceImpl implements IssueService {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-
-                if (StringUtils.hasText(issueDTO.getTitle())){
-                    issue.setTitle(issueDTO.getTitle());
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    if (StringUtils.hasText(issueDTO.getTitle())){
+                        issue.setTitle(issueDTO.getTitle());
+                    }
+                    if (StringUtils.hasText(issueDTO.getDescription())){
+                        issue.setDescription(issueDTO.getDescription());
+                    }
+                    if (issueDTO.getStatus() != null){ // If status from IssueDTO not null
+                        Status status = statusRepository.findByName(issueDTO.getStatus().getName().toUpperCase())
+                                .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
+                        issue.setStatus(status);
+                    }
+                    if (issueDTO.getSeverity() != null){ // If severity from IssueDTO not null
+                        Severity severity = severityRepository.findByName(issueDTO.getSeverity().getName().toUpperCase())
+                                .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
+                        issue.setSeverity(severity);
+                    }
+                    if (issueDTO.getPriority() != null){ // If priority from IssueDTO not null
+                        Priority priority = priorityRepository.findByName(issueDTO.getPriority().getName().toUpperCase())
+                                .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
+                        issue.setPriority(priority);
+                    }
+                    Issue updatedIssue = issueRepository.save(issue);
+                    updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
+                    return mapToIssueDto(updatedIssue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
                 }
-                if (StringUtils.hasText(issueDTO.getDescription())){
-                    issue.setDescription(issueDTO.getDescription());
-                }
-                if (issueDTO.getStatus() != null){ // If status from IssueDTO not null
-                    Status oldStatus = statusRepository.findByName(issue.getStatus().getName().toUpperCase())
-                            .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
-                    oldStatus.getIssues().remove(issue);
-                    statusRepository.save(oldStatus);
-
-                    Status newStatus = statusRepository.findByName(issueDTO.getStatus().getName().toUpperCase())
-                            .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
-                    newStatus.getIssues().add(issue);
-                    statusRepository.save(newStatus);
-
-                    issue.setStatus(newStatus);
-                }
-                if (issueDTO.getSeverity() != null){ // If severity from IssueDTO not null
-                    Severity oldSeverity = severityRepository.findByName(issue.getSeverity().getName().toUpperCase())
-                            .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
-                    oldSeverity.getIssues().remove(issue);
-                    severityRepository.save(oldSeverity);
-
-                    Severity newSeverity = severityRepository.findByName(issueDTO.getSeverity().getName().toUpperCase())
-                            .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
-                    newSeverity.getIssues().add(issue);
-                    severityRepository.save(newSeverity);
-
-                    issue.setSeverity(newSeverity);
-                }
-                if (issueDTO.getPriority() != null){ // If priority from IssueDTO not null
-                    Priority oldPriority = priorityRepository.findByName(issue.getPriority().getName().toUpperCase())
-                            .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
-                    oldPriority.getIssues().remove(issue);
-                    priorityRepository.save(oldPriority);
-
-                    Priority newPriority = priorityRepository.findByName(issueDTO.getPriority().getName().toUpperCase())
-                            .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
-                    newPriority.getIssues().add(issue);
-                    priorityRepository.save(newPriority);
-
-                    issue.setPriority(newPriority);
-                }
-                Issue updatedIssue = issueRepository.save(issue);
-                return mapToIssueDto(updatedIssue);
             } else {
                 throw new IssueNotFoundException("Issue could not be found");
             }
@@ -162,13 +148,159 @@ public class IssueServiceImpl implements IssueService {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                if (userEntity.getIssuesAssigned().contains(issue)){
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
                     issueRepository.deleteById(issueId);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
 
-                    project.getIssues().remove(issue);
-                    projectRepository.save(project);
+    @Override
+    public IssueDTO updateUpdatedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    issue.setUpdatedDate(LocalDateTime.now());
+                    Issue updatedIssue = issueRepository.save(issue);
+                    return mapToIssueDto(updatedIssue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
+
+    @Override
+    public IssueDTO updateResolvedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    issue.setResolvedDate(LocalDateTime.now());
+                    Issue updatedIssue = issueRepository.save(issue);
+                    updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
+                    return mapToIssueDto(updatedIssue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
+
+    @Override
+    public IssueDTO updateClosedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    issue.setClosedDate(LocalDateTime.now());
+                    Issue updatedIssue = issueRepository.save(issue);
+                    updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
+                    return mapToIssueDto(updatedIssue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
+
+    @Override
+    public IssueDTO updateStatusByUserIdByProjectIdByIssueIdByStatusName(int userId, int projectId, int issueId, String statusName) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+        Status status = statusRepository.findByName(statusName.toUpperCase())
+                .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    issue.setStatus(status);
+                    Issue updatedIssue = issueRepository.save(issue);
+                    updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
+                    return mapToIssueDto(updatedIssue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
+
+    @Override
+    public IssueDTO updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(int userId, int projectId, int issueId, String severityName) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+        Severity severity = severityRepository.findByName(severityName.toUpperCase())
+                .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    issue.setSeverity(severity);
+                    Issue updatedIssue = issueRepository.save(issue);
+                    updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
+                    return mapToIssueDto(updatedIssue);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
+
+    @Override
+    public IssueDTO updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(int userId, int projectId, int issueId, String priorityName) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+        Priority priority = priorityRepository.findByName(priorityName.toUpperCase())
+                .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    issue.setPriority(priority);
+                    Issue updatedIssue = issueRepository.save(issue);
+                    updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
+                    return mapToIssueDto(updatedIssue);
                 } else {
                     throw new IssueNotFoundException("Issue could not be found");
                 }
@@ -202,23 +334,32 @@ public class IssueServiceImpl implements IssueService {
         if (StringUtils.hasText(issueDTO.getDescription())){
             issue.setDescription(issueDTO.getDescription());
         }
-        if (issueDTO.getStatus() != null){
+        if (issueDTO.getStatus() != null){ // If status from IssueDTO not null
             Status status = statusRepository.findByName(issueDTO.getStatus().getName().toUpperCase())
                     .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
             issue.setStatus(status);
         }
-        if (issueDTO.getSeverity() != null){
+        if (issueDTO.getSeverity() != null){ // If severity from IssueDTO not null
             Severity severity = severityRepository.findByName(issueDTO.getSeverity().getName().toUpperCase())
-                .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
+                    .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
             issue.setSeverity(severity);
         }
-        if (issueDTO.getPriority() != null){
+        if (issueDTO.getPriority() != null){ // If priority from IssueDTO not null
             Priority priority = priorityRepository.findByName(issueDTO.getPriority().getName().toUpperCase())
                     .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
             issue.setPriority(priority);
         }
         Issue newIssue = issueRepository.save(issue);
+        updateUpdatedDateByIssueId(issueId);
         return mapToIssueDto(newIssue);
+    }
+
+    @Override
+    public IssueDTO updateUpdatedDateByIssueId(int issueId) {
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+        issue.setUpdatedDate(LocalDateTime.now());
+        Issue updatedIssue = issueRepository.save(issue);
+        return mapToIssueDto(updatedIssue);
     }
 
     @Override
@@ -227,132 +368,6 @@ public class IssueServiceImpl implements IssueService {
         issueRepository.deleteById(issueId);
     }
 
-
-
-
-
-
-
-//    @Override
-//    public IssueDTO updateUpdatedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
-//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-//        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-//
-//        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-//            if (project.getIssues().contains(issue)){
-//                issue.setUpdatedDate(LocalDateTime.now());
-//                Issue updatedIssue = issueRepository.save(issue);
-//                return mapToIssueDto(updatedIssue);
-//            } else {
-//                throw new IssueNotFoundException("Issue could not be found");
-//            }
-//        } else {
-//            throw new ProjectNotFoundException("Project could not be found");
-//        }
-//    }
-//
-//    @Override
-//    public IssueDTO updateResolvedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
-//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-//        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-//
-//        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-//            if (project.getIssues().contains(issue)){
-//                issue.setResolvedDate(LocalDateTime.now());
-//                Issue updatedIssue = issueRepository.save(issue);
-//                return mapToIssueDto(updatedIssue);
-//            } else {
-//                throw new IssueNotFoundException("Issue could not be found");
-//            }
-//        } else {
-//            throw new ProjectNotFoundException("Project could not be found");
-//        }
-//    }
-//
-//    @Override
-//    public IssueDTO updateClosedDateByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
-//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-//        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-//
-//        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-//            if (project.getIssues().contains(issue)){
-//                issue.setClosedDate(LocalDateTime.now());
-//                Issue updatedIssue = issueRepository.save(issue);
-//                return mapToIssueDto(updatedIssue);
-//            } else {
-//                throw new IssueNotFoundException("Issue could not be found");
-//            }
-//        } else {
-//            throw new ProjectNotFoundException("Project could not be found");
-//        }
-//    }
-//
-//
-//    @Override
-//    public IssueDTO updateStatusByUserIdByProjectIdByIssueIdByStatusName(int userId, int projectId, int issueId, String statusName) {
-//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-//        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-//        Status status = statusRepository.findByName(statusName.toUpperCase())
-//                .orElseThrow(() -> new StatusNotFoundException("Status could not be found"));
-//
-//        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-//            if (project.getIssues().contains(issue)){
-//                issue.setStatus(status);
-//                Issue updatedIssue = issueRepository.save(issue);
-//                return mapToIssueDto(updatedIssue);
-//            } else {
-//                throw new IssueNotFoundException("Issue could not be found");
-//            }
-//        } else {
-//            throw new ProjectNotFoundException("Project could not be found");
-//        }
-//    }
-//
-//    @Override
-//    public IssueDTO updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(int userId, int projectId, int issueId, String severityName) {
-//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-//        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-//        Severity severity = severityRepository.findByName(severityName.toUpperCase())
-//                .orElseThrow(() -> new SeverityNotFoundException("Severity could not be found"));
-//
-//        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-//            if (project.getIssues().contains(issue)){
-//                issue.setSeverity(severity);
-//                Issue updatedIssue = issueRepository.save(issue);
-//                return mapToIssueDto(updatedIssue);
-//            } else {
-//                throw new IssueNotFoundException("Issue could not be found");
-//            }
-//        } else {
-//            throw new ProjectNotFoundException("Project could not be found");
-//        }
-//    }
-//
-//    @Override
-//    public IssueDTO updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(int userId, int projectId, int issueId, String priorityName) {
-//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-//        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-//        Priority priority = priorityRepository.findByName(priorityName.toUpperCase())
-//                .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
-//
-//        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-//            if (project.getIssues().contains(issue)){
-//                issue.setPriority(priority);
-//                Issue updatedIssue = issueRepository.save(issue);
-//                return mapToIssueDto(updatedIssue);
-//            } else {
-//                throw new IssueNotFoundException("Issue could not be found");
-//            }
-//        } else {
-//            throw new ProjectNotFoundException("Project could not be found");
-//        }
-//    }
 
     // Map Issue to IssueDTO
     private IssueDTO mapToIssueDto(Issue issue){

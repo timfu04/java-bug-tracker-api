@@ -64,6 +64,54 @@ public class IssueController {
         return new ResponseEntity<>("Issue deleted successfully", HttpStatus.OK);
     }
 
+    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-updated-date")
+    public ResponseEntity<IssueDTO> updateUpdatedDateByUserIdByProjectIdByIssueId(@PathVariable(value = "userId") int userId,
+                                                                                  @PathVariable(value = "projectId") int projectId,
+                                                                                  @PathVariable(value = "issueId") int issueId){
+        return new ResponseEntity<>(issueServiceImpl.updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-resolved-date")
+    public ResponseEntity<IssueDTO> updateResolvedDateByUserIdByProjectIdByIssueId(@PathVariable(value = "userId") int userId,
+                                                                                   @PathVariable(value = "projectId") int projectId,
+                                                                                   @PathVariable(value = "issueId") int issueId){
+        return new ResponseEntity<>(issueServiceImpl.updateResolvedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-closed-date")
+    public ResponseEntity<IssueDTO> updateClosedDateByUserIdByProjectIdByIssueId(@PathVariable(value = "userId") int userId,
+                                                                                 @PathVariable(value = "projectId") int projectId,
+                                                                                 @PathVariable(value = "issueId") int issueId){
+        return new ResponseEntity<>(issueServiceImpl.updateClosedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-status")
+    public ResponseEntity<IssueDTO> updateStatusByUserIdByProjectIdByIssueIdByStatusName(@PathVariable(value = "userId") int userId,
+                                                                                         @PathVariable(value = "projectId") int projectId,
+                                                                                         @PathVariable(value = "issueId") int issueId,
+                                                                                         @RequestBody Status status){
+        return new ResponseEntity<>(issueServiceImpl
+                .updateStatusByUserIdByProjectIdByIssueIdByStatusName(userId, projectId, issueId, status.getName()), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-severity")
+    public ResponseEntity<IssueDTO> updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(@PathVariable(value = "userId") int userId,
+                                                                                         @PathVariable(value = "projectId") int projectId,
+                                                                                         @PathVariable(value = "issueId") int issueId,
+                                                                                         @RequestBody Severity severity){
+        return new ResponseEntity<>(issueServiceImpl
+                .updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(userId, projectId, issueId, severity.getName()), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-priority")
+    public ResponseEntity<IssueDTO> updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(@PathVariable(value = "userId") int userId,
+                                                                                         @PathVariable(value = "projectId") int projectId,
+                                                                                         @PathVariable(value = "issueId") int issueId,
+                                                                                         @RequestBody Priority priority){
+        return new ResponseEntity<>(issueServiceImpl
+                .updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(userId, projectId, issueId, priority.getName()), HttpStatus.OK);
+    }
+
     @GetMapping("issue")
     public ResponseEntity<List<IssueDTO>> getAllIssues(){
         return new ResponseEntity<>(issueServiceImpl.getAllIssues(), HttpStatus.OK);
@@ -80,64 +128,15 @@ public class IssueController {
         return new ResponseEntity<>(issueServiceImpl.updateIssuePartialByIssueId(issueId, issueDTO), HttpStatus.OK);
     }
 
+    @PatchMapping("issue/{issueId}/update-updated-date")
+    public ResponseEntity<IssueDTO> updateUpdatedDateByIssueId(@PathVariable(value = "issueId") int issueId){
+        return new ResponseEntity<>(issueServiceImpl.updateUpdatedDateByIssueId(issueId), HttpStatus.OK);
+    }
+
     @DeleteMapping("issue/{issueId}/delete")
     public ResponseEntity<String> deleteIssueByIssueId(@PathVariable(value = "issueId") int issueId){
         issueServiceImpl.deleteIssueByIssueId(issueId);
-        return ResponseEntity.ok("Issue deleted successfully");
+        return new ResponseEntity<>("Issue deleted successfully", HttpStatus.OK);
     }
-
-
-
-
-
-
-
-//    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-updated-date")
-//    public ResponseEntity<IssueDTO> updateUpdatedDate(@PathVariable(value = "userId") int userId,
-//                                                      @PathVariable(value = "projectId") int projectId,
-//                                                      @PathVariable(value = "issueId") int issueId){
-//        return new ResponseEntity<>(issueServiceImpl.updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId), HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-resolved-date")
-//    public ResponseEntity<IssueDTO> updateResolvedDate(@PathVariable(value = "userId") int userId,
-//                                                      @PathVariable(value = "projectId") int projectId,
-//                                                      @PathVariable(value = "issueId") int issueId){
-//        return new ResponseEntity<>(issueServiceImpl.updateResolvedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId), HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-closed-date")
-//    public ResponseEntity<IssueDTO> updateClosedDate(@PathVariable(value = "userId") int userId,
-//                                                      @PathVariable(value = "projectId") int projectId,
-//                                                      @PathVariable(value = "issueId") int issueId){
-//        return new ResponseEntity<>(issueServiceImpl.updateClosedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId), HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-status")
-//    public ResponseEntity<IssueDTO> updateStatusByUserIdByProjectIdByIssueIdByStatusName(@PathVariable(value = "userId") int userId,
-//                                                                                         @PathVariable(value = "projectId") int projectId,
-//                                                                                         @PathVariable(value = "issueId") int issueId,
-//                                                                                         @RequestBody Status status){
-//        return new ResponseEntity<>(issueServiceImpl
-//                .updateStatusByUserIdByProjectIdByIssueIdByStatusName(userId, projectId, issueId, status.getName()), HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-severity")
-//    public ResponseEntity<IssueDTO> updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(@PathVariable(value = "userId") int userId,
-//                                                                                         @PathVariable(value = "projectId") int projectId,
-//                                                                                         @PathVariable(value = "issueId") int issueId,
-//                                                                                         @RequestBody Severity severity){
-//        return new ResponseEntity<>(issueServiceImpl
-//                .updateSeverityByUserIdByProjectIdByIssueIdBySeverityName(userId, projectId, issueId, severity.getName()), HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-priority")
-//    public ResponseEntity<IssueDTO> updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(@PathVariable(value = "userId") int userId,
-//                                                                                         @PathVariable(value = "projectId") int projectId,
-//                                                                                         @PathVariable(value = "issueId") int issueId,
-//                                                                                         @RequestBody Priority priority){
-//        return new ResponseEntity<>(issueServiceImpl
-//                .updatePriorityByUserIdByProjectIdByIssueIdByPriorityName(userId, projectId, issueId, priority.getName()), HttpStatus.OK);
-//    }
 
 }

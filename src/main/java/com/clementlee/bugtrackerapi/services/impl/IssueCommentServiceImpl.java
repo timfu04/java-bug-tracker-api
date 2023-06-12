@@ -36,23 +36,19 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                IssueComment issueComment = new IssueComment();
-                issueComment.setCommentText(issueCommentDTO.getCommentText());
-                issueComment.setCreatedDate(LocalDateTime.now());
-                issueComment.setUser(userEntity);
-                issueComment.setIssue(issue);
-                IssueComment newIssueComment = issueCommentRepository.save(issueComment);
-
-                userEntity.getIssueComments().add(newIssueComment);
-                userRepository.save(userEntity);
-
-                issue.getIssueComments().add(newIssueComment);
-                issueRepository.save(issue);
-
-                return mapToIssueCommentDto(newIssueComment);
-
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    IssueComment issueComment = new IssueComment();
+                    issueComment.setCommentText(issueCommentDTO.getCommentText());
+                    issueComment.setCreatedDate(LocalDateTime.now());
+                    issueComment.setUser(userEntity);
+                    issueComment.setIssue(issue);
+                    IssueComment newIssueComment = issueCommentRepository.save(issueComment);
+                    return mapToIssueCommentDto(newIssueComment);
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
             } else {
                 throw new IssueNotFoundException("Issue could not be found");
             }
@@ -62,14 +58,32 @@ public class IssueCommentServiceImpl implements IssueCommentService {
     }
 
     @Override
-    public List<IssueCommentDTO> getAllIssueCommentsByIssueId(int issueId) {
+    public List<IssueCommentDTO> getAllIssueCommentsByUserIdByProjectIdByIssueId(int userId, int projectId, int issueId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-        return issue.getIssueComments().stream().map(issueComment -> mapToIssueCommentDto(issueComment)).collect(Collectors.toList());
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    return issue.getIssueComments().stream().map(issueComment -> mapToIssueCommentDto(issueComment)).collect(Collectors.toList());
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
     }
 
     @Override
     public List<IssueCommentDTO> getAllIssueCommentsByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        if (userEntity.getIssueComments().isEmpty()){
+            throw new IssueCommentNotFoundException("Issue comment could not be found");
+        }
         return userEntity.getIssueComments().stream().map(issueComment -> mapToIssueCommentDto(issueComment)).collect(Collectors.toList());
     }
 
@@ -81,12 +95,20 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                if (issue.getIssueComments().contains(issueComment)){
-                    return mapToIssueCommentDto(issueComment);
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
+                        if (userEntity.getIssueComments().contains(issueComment)){
+                            return mapToIssueCommentDto(issueComment);
+                        } else {
+                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        }
+                    } else {
+                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    }
                 } else {
-                    throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    throw new IssueNotFoundException("Issue could not be found");
                 }
             } else {
                 throw new IssueNotFoundException("Issue could not be found");
@@ -105,14 +127,22 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                if (issue.getIssueComments().contains(issueComment)){
-                    issueComment.setCommentText(issueCommentDTO.getCommentText());
-                    IssueComment newIssueComment = issueCommentRepository.save(issueComment);
-                    return mapToIssueCommentDto(newIssueComment);
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
+                        if (userEntity.getIssueComments().contains(issueComment)){
+                            issueComment.setCommentText(issueCommentDTO.getCommentText());
+                            IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
+                            return mapToIssueCommentDto(updatedIssueComment);
+                        } else {
+                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        }
+                    } else {
+                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    }
                 } else {
-                    throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    throw new IssueNotFoundException("Issue could not be found");
                 }
             } else {
                 throw new IssueNotFoundException("Issue could not be found");
@@ -130,12 +160,53 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                if (issue.getIssueComments().contains(issueComment)){
-                    issueCommentRepository.delete(issueComment);
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
+                        if (userEntity.getIssueComments().contains(issueComment)){
+                            issueCommentRepository.deleteById(issueCommentId);
+                        } else {
+                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        }
+                    } else {
+                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    }
                 } else {
-                    throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    throw new IssueNotFoundException("Issue could not be found");
+                }
+            } else {
+                throw new IssueNotFoundException("Issue could not be found");
+            }
+        } else {
+            throw new ProjectNotFoundException("Project could not be found");
+        }
+    }
+
+    @Override
+    public IssueCommentDTO updateUpdatedDateByUserIdByProjectIdByIssueIdByIssueCommentId(int userId, int projectId, int issueId, int issueCommentId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
+        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
+        IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
+                .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
+
+        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
+            if (project.getIssues().contains(issue)){ // If project contains given issue
+                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
+                        if (userEntity.getIssueComments().contains(issueComment)){
+                            issueComment.setUpdatedDate(LocalDateTime.now());
+                            IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
+                            return mapToIssueCommentDto(updatedIssueComment);
+                        } else {
+                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        }
+                    } else {
+                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                    }
+                } else {
+                    throw new IssueNotFoundException("Issue could not be found");
                 }
             } else {
                 throw new IssueNotFoundException("Issue could not be found");
@@ -163,39 +234,14 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
         issueComment.setCommentText(issueCommentDTO.getCommentText());
-        IssueComment newIssueComment = issueCommentRepository.save(issueComment);
-        return mapToIssueCommentDto(newIssueComment);
+        IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
+        return mapToIssueCommentDto(updatedIssueComment);
     }
 
     @Override
     public void deleteIssueCommentByIssueCommentId(int issueCommentId) {
         issueCommentRepository.findById(issueCommentId).orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
         issueCommentRepository.deleteById(issueCommentId);
-    }
-
-    @Override
-    public IssueCommentDTO updateUpdatedDateByUserIdByProjectIdByIssueIdByIssueCommentId(int userId, int projectId, int issueId, int issueCommentId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-        IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
-                .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
-
-        if (userEntity.getProjectsInvolved().contains(project)){ // If list of projects involved from user contains the given project
-            if (project.getIssues().contains(issue)){
-                if (issue.getIssueComments().contains(issueComment)){
-                    issueComment.setUpdatedDate(LocalDateTime.now());
-                    IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
-                    return mapToIssueCommentDto(updatedIssueComment);
-                } else {
-                    throw new IssueCommentNotFoundException("Issue comment could not be found");
-                }
-            } else {
-                throw new IssueNotFoundException("Issue could not be found");
-            }
-        } else {
-            throw new ProjectNotFoundException("Project could not be found");
-        }
     }
 
     // Map IssueComment to IssueCommentDTO

@@ -19,20 +19,22 @@ public class IssueComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private String commentText;
 
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     private LocalDateTime updatedDate;
 
     @JsonBackReference(value = "users-issue_comments")
     @ManyToOne
-    @JoinColumn(name = "fk_users_id", referencedColumnName = "id")
+    @JoinColumn(name = "fk_users_id", referencedColumnName = "id", nullable = false)
     private UserEntity user;
 
     @JsonBackReference(value = "issues-issue_comments")
     @ManyToOne
-    @JoinColumn(name = "fk_issues_id", referencedColumnName = "id")
+    @JoinColumn(name = "fk_issues_id", referencedColumnName = "id", nullable = false)
     private Issue issue;
 
 }
