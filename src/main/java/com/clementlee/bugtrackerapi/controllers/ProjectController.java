@@ -32,7 +32,7 @@ public class ProjectController {
 
     @GetMapping("user/{userId}/project/{projectId}")
     public ResponseEntity<ProjectDTO> getProjectCreatedByUserIdByProjectId(@PathVariable(value = "userId") int userId,
-                                                                    @PathVariable(value = "projectId") int projectId){
+                                                                           @PathVariable(value = "projectId") int projectId){
         return new ResponseEntity<>(projectServiceImpl.getProjectCreatedByUserIdByProjectId(userId, projectId), HttpStatus.OK);
     }
 
@@ -47,21 +47,22 @@ public class ProjectController {
     public ResponseEntity<String> deleteProjectByUserIdByProjectId(@PathVariable(value = "userId") int userId,
                                                                    @PathVariable(value = "projectId") int projectId){
         projectServiceImpl.deleteProjectByUserIdByProjectId(userId, projectId);
-        return ResponseEntity.ok("Project deleted successfully");
+        return new ResponseEntity<>("Project deleted successfully", HttpStatus.OK);
     }
 
     @PutMapping("user/{userCreatorId}/project/{projectId}/add-user/user/{userIdToAdd}")
-    public ResponseEntity<ProjectDTO> addUserIntoProjectByUserIdByProjectId(@PathVariable(value = "userCreatorId") int userCreatorId,
-                                                                            @PathVariable(value = "projectId") int projectId,
-                                                                            @PathVariable(value = "userIdToAdd") int userIdToAdd){
-        return new ResponseEntity<>(projectServiceImpl.addUserIntoProjectByUserIdByProjectId(userCreatorId, projectId, userIdToAdd), HttpStatus.OK);
+    public ResponseEntity<ProjectDTO> addUserIntoProjectByUserCreatorIdByProjectIdByUserId(@PathVariable(value = "userCreatorId") int userCreatorId,
+                                                                                           @PathVariable(value = "projectId") int projectId,
+                                                                                           @PathVariable(value = "userIdToAdd") int userIdToAdd){
+        return new ResponseEntity<>(projectServiceImpl
+                .addUserIntoProjectByUserCreatorIdByProjectIdByUserId(userCreatorId, projectId, userIdToAdd), HttpStatus.OK);
     }
 
     @DeleteMapping("user/{userCreatorId}/project/{projectId}/remove-user/user/{userIdToRemove}")
-    public ResponseEntity<String> removeUserFromProjectByUserIdByProjectId(@PathVariable(value = "userCreatorId") int userCreatorId,
-                                                                            @PathVariable(value = "projectId") int projectId,
-                                                                            @PathVariable(value = "userIdToRemove") int userIdToRemove){
-        projectServiceImpl.removeUserFromProjectByUserIdByProjectId(userCreatorId, projectId, userIdToRemove);
+    public ResponseEntity<String> removeUserFromProjectByUserCreatorIdByProjectIdByUserId(@PathVariable(value = "userCreatorId") int userCreatorId,
+                                                                                          @PathVariable(value = "projectId") int projectId,
+                                                                                          @PathVariable(value = "userIdToRemove") int userIdToRemove){
+        projectServiceImpl.removeUserFromProjectByUserCreatorIdByProjectIdByUserId(userCreatorId, projectId, userIdToRemove);
         return new ResponseEntity<>("User removed from project successfully", HttpStatus.OK);
     }
 
@@ -88,15 +89,15 @@ public class ProjectController {
     }
 
     @PutMapping("project/{projectId}/add-user/user/{userId}")
-    public ResponseEntity<ProjectDTO> addUserIntoProject(@PathVariable(value = "projectId") int projectId,
-                                                         @PathVariable(value = "userId") int userId){
-        return new ResponseEntity<>(projectServiceImpl.addUserIntoProject(projectId, userId), HttpStatus.OK);
+    public ResponseEntity<ProjectDTO> addUserIntoProjectByProjectIdByUserId(@PathVariable(value = "projectId") int projectId,
+                                                                            @PathVariable(value = "userId") int userId){
+        return new ResponseEntity<>(projectServiceImpl.addUserIntoProjectByProjectIdByUserId(projectId, userId), HttpStatus.OK);
     }
 
     @DeleteMapping("project/{projectId}/remove-user/user/{userId}")
-    public ResponseEntity<String> removeUserFromProject(@PathVariable(value = "projectId") int projectId,
-                                                        @PathVariable(value = "userId") int userId){
-        projectServiceImpl.removeUserFromProject(projectId, userId);
+    public ResponseEntity<String> removeUserFromProjectByProjectIdByUserId(@PathVariable(value = "projectId") int projectId,
+                                                                           @PathVariable(value = "userId") int userId){
+        projectServiceImpl.removeUserFromProjectByProjectIdByUserId(projectId, userId);
         return new ResponseEntity<>("User removed from project successfully", HttpStatus.OK);
     }
 

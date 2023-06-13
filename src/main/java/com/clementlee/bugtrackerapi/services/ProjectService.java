@@ -12,15 +12,15 @@ public interface ProjectService {
     // Update name or description or start date or end date or all of them
     ProjectDTO updateProjectPartialByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO);
     void deleteProjectByUserIdByProjectId(int userId, int projectId);
-    ProjectDTO addUserIntoProjectByUserIdByProjectId(int userCreatorId, int projectId, int userIdToAdd);
-    void removeUserFromProjectByUserIdByProjectId(int userCreatorId, int projectId, int userIdToRemove);
+    ProjectDTO addUserIntoProjectByUserCreatorIdByProjectIdByUserId(int userCreatorId, int projectId, int userIdToAdd);
+    void removeUserFromProjectByUserCreatorIdByProjectIdByUserId(int userCreatorId, int projectId, int userIdToRemove);
 
     List<ProjectDTO> getAllProjects();
     ProjectDTO getProjectByProjectId(int projectId);
+    // Update name or description or start date or end date or all of them
     ProjectDTO updateProjectPartialByProjectId(int projectId, ProjectDTO projectDTO);
     void deleteProjectByProjectId(int projectId);
-
-    ProjectDTO addUserIntoProject(int projectId, int userId);
-    void removeUserFromProject(int projectId, int userId);
+    ProjectDTO addUserIntoProjectByProjectIdByUserId(int projectId, int userId);
+    void removeUserFromProjectByProjectIdByUserId(int projectId, int userId);
 
 }

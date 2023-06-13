@@ -23,7 +23,7 @@ public class BlankAndUppercaseValidator implements ConstraintValidator<ValidateB
                 return isUpperCase(value);
             } else {
                 // Empty string error message are excluded in GlobalExceptionHandler
-                // Allow error message from @NotBlank to be shown
+                // Allow error message from @NotBlank to be shown instead of empty string provided here
                 context.buildConstraintViolationWithTemplate("").addConstraintViolation();
                 return false;
             }

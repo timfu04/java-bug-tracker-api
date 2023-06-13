@@ -9,7 +9,7 @@ public interface UserService {
     UserDTO createUser(UserDTO userDTO);
     List<UserDTO> getAllUsers();
     UserDTO getUserByUserId(int userId);
-    UserDTO updateUserPartialByUserId(int userId, UserDTO userDTO); // Allows update on username or password or email or all of them
+    UserDTO updateUserPartialByUserId(int userId, UserDTO userDTO); // Update username or password or email or all of them
     void deleteUserByUserId(int userId);
     UserDTO updateRoleByUserIdByRoleName(int userId, String roleName);
     UserDTO revokeRoleByUserId(int userId);

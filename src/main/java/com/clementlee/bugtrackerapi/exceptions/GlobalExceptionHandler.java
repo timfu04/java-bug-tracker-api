@@ -38,8 +38,47 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles StatusNotFoundException
+    @ExceptionHandler(StatusNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleStatusNotFoundException(StatusNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
 
+    // Handles SeverityNotFoundException
+    @ExceptionHandler(SeverityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleSeverityNotFoundException(SeverityNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
 
+    // Handles PriorityNotFoundException
+    @ExceptionHandler(PriorityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handlePriorityNotFoundException(PriorityNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles IssueNotFoundException
+    @ExceptionHandler(IssueNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueNotFoundException(IssueNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles IssueCommentNotFoundException
+    @ExceptionHandler(IssueCommentNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueCommentNotFoundException(IssueCommentNotFoundException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles DuplicateUserInProjectException
+    @ExceptionHandler(DuplicateUserInProjectException.class)
+    public ResponseEntity<ExceptionResponse> handleDuplicateUserInProjectException(DuplicateUserInProjectException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
 
     // Handles validation exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -89,52 +128,6 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse =
                 createExceptionResponse(HttpStatus.BAD_REQUEST.value(), ex.getMostSpecificCause().getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
-
-
-
-
-
-    // Handles status not found exception
-    @ExceptionHandler(StatusNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleStatusNotFoundException(StatusNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
-
-    // Handles severity not found exception
-    @ExceptionHandler(SeverityNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleSeverityNotFoundException(SeverityNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
-
-    // Handles priority not found exception
-    @ExceptionHandler(PriorityNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handlePriorityNotFoundException(PriorityNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
-
-    // Handles issue not found exception
-    @ExceptionHandler(IssueNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleIssueNotFoundException(IssueNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
-
-    // Handles duplicate user in project exception
-    @ExceptionHandler(DuplicateUserInProjectException.class)
-    public ResponseEntity<ExceptionResponse> handleDuplicateUserInProjectException(DuplicateUserInProjectException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
-    }
-
-    // Handles issue comment not found exception
-    @ExceptionHandler(IssueCommentNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleIssueCommentNotFoundException(IssueCommentNotFoundException ex) {
-        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
     // Create exception response
