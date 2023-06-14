@@ -25,4 +25,6 @@ public interface IssueService {
     IssueDTO updateUpdatedDateByIssueId(int issueId);
     void deleteIssueByIssueId(int issueId);
 
+    // add update
+
 }

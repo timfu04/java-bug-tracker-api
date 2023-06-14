@@ -1,9 +1,7 @@
 package com.clementlee.bugtrackerapi.services.impl;
 
 import com.clementlee.bugtrackerapi.dto.ProjectDTO;
-import com.clementlee.bugtrackerapi.exceptions.DuplicateUserInProjectException;
-import com.clementlee.bugtrackerapi.exceptions.ProjectNotFoundException;
-import com.clementlee.bugtrackerapi.exceptions.UserNotFoundException;
+import com.clementlee.bugtrackerapi.exceptions.*;
 import com.clementlee.bugtrackerapi.models.Project;
 import com.clementlee.bugtrackerapi.models.UserEntity;
 import com.clementlee.bugtrackerapi.repositories.ProjectRepository;
@@ -45,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectDTO> getAllProjectsCreatedByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         if (userEntity.getProjectsCreated().isEmpty()){ // If list of projects created from user is empty
-            throw new ProjectNotFoundException("No project created by this user");
+            throw new ProjectNotFoundException("No projects created by this user");
         }
         // Convert list of UserEntity to list of UserDTO
         return userEntity.getProjectsCreated().stream().map(project -> mapToProjectDto(project)).collect(Collectors.toList());
@@ -55,10 +53,10 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO getProjectCreatedByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getProjectsCreated().contains(project)){ // If user created given project
+        if (project.getUserCreated().equals(userEntity)){ // If project created by given user
             return mapToProjectDto(project);
         } else {
-            throw new ProjectNotFoundException("Project not created by this user");
+            throw new ProjectNotCreatedByThisUserException("Project not created by this user");
         }
     }
 
@@ -66,7 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO updateProjectPartialByUserIdByProjectId(int userId, int projectId, ProjectDTO projectDTO) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getProjectsCreated().contains(project)){ // If user created given project
+        if (project.getUserCreated().equals(userEntity)){ // If project created by given user
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
             if (StringUtils.hasText(projectDTO.getName())){
                 project.setName(projectDTO.getName());
@@ -83,7 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
             Project updatedProject = projectRepository.save(project);
             return mapToProjectDto(updatedProject);
         } else {
-            throw new ProjectNotFoundException("Project not created by this user");
+            throw new ProjectNotCreatedByThisUserException("Project not created by this user");
         }
     }
 
@@ -91,10 +89,10 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProjectByUserIdByProjectId(int userId, int projectId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
-        if (userEntity.getProjectsCreated().contains(project)){ // If user created given project
+        if (project.getUserCreated().equals(userEntity)){ // If project created by given user
             projectRepository.deleteById(projectId);
         } else {
-            throw new ProjectNotFoundException("Project not created by this user");
+            throw new ProjectNotCreatedByThisUserException("Project not created by this user");
         }
     }
 
@@ -103,17 +101,16 @@ public class ProjectServiceImpl implements ProjectService {
         UserEntity userCreator = userRepository.findById(userCreatorId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         UserEntity userToAdd = userRepository.findById(userIdToAdd).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-
-        if (userCreator.getProjectsCreated().contains(project)) { // If user created given project
-            if (!project.getUsersInvolved().contains(userToAdd)) { // If project does not involve user to add
+        if (project.getUserCreated().equals(userCreator)){ // If project created by given user
+            if (!project.getUsersInvolved().contains(userToAdd)){ // If project does not involve user to add
                 project.getUsersInvolved().add(userToAdd);
                 Project updatedProject = projectRepository.save(project);
                 return mapToProjectDto(updatedProject);
             } else {
-                throw new DuplicateUserInProjectException("User already exist in project");
+                throw new DuplicateUserInProjectException("User already exist in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project not created by this user");
+            throw new ProjectNotCreatedByThisUserException("Project not created by this user");
         }
     }
 
@@ -122,16 +119,15 @@ public class ProjectServiceImpl implements ProjectService {
         UserEntity userCreator = userRepository.findById(userCreatorId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         UserEntity userToRemove = userRepository.findById(userIdToRemove).orElseThrow(() -> new UserNotFoundException("User could not be found"));
-
-        if (userCreator.getProjectsCreated().contains(project)){ // If user created given project
+        if (project.getUserCreated().equals(userCreator)){ // If project created by given user
             if (project.getUsersInvolved().contains(userToRemove)){ // If project involves user to remove
                 project.getUsersInvolved().remove(userToRemove);
                 projectRepository.save(project);
             } else {
-                throw new UserNotFoundException("User not in this project");
+                throw new UserNotInProjectException("User not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project not created by this user");
+            throw new ProjectNotCreatedByThisUserException("Project not created by this user");
         }
     }
 
@@ -195,7 +191,7 @@ public class ProjectServiceImpl implements ProjectService {
             project.getUsersInvolved().remove(userEntity);
             projectRepository.save(project);
         } else {
-            throw new UserNotFoundException("User not in this project");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 

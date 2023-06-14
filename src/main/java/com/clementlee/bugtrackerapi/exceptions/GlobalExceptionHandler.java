@@ -38,6 +38,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles ProjectNotCreatedByThisUserException
+    @ExceptionHandler(ProjectNotCreatedByThisUserException.class)
+    public ResponseEntity<ExceptionResponse> handleProjectNotCreatedByThisUserException(ProjectNotCreatedByThisUserException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    // Handles UserNotInProjectException
+    @ExceptionHandler(UserNotInProjectException.class)
+    public ResponseEntity<ExceptionResponse> handleUserNotInProjectException(UserNotInProjectException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
     // Handles StatusNotFoundException
     @ExceptionHandler(StatusNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleStatusNotFoundException(StatusNotFoundException ex) {
