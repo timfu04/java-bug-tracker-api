@@ -48,10 +48,11 @@ public class IssueController {
     }
 
     @PatchMapping("user/{userId}/project/{projectId}/issue/{issueId}/update-partial")
-    public ResponseEntity<IssueDTO> updateIssuePartialByUserIdByProjectIdByIssueId(@PathVariable(value = "userId") int userId,
-                                                                                   @PathVariable(value = "projectId") int projectId,
-                                                                                   @PathVariable(value = "issueId") int issueId,
-                                                                                   @Validated(IssueUpdateValidationGroup.class) @RequestBody IssueDTO issueDTO){
+    public ResponseEntity<IssueDTO> updateIssuePartialByUserIdByProjectIdByIssueId(
+                                                                        @PathVariable(value = "userId") int userId,
+                                                                        @PathVariable(value = "projectId") int projectId,
+                                                                        @PathVariable(value = "issueId") int issueId,
+                                                                        @Validated(IssueUpdateValidationGroup.class) @RequestBody IssueDTO issueDTO){
         return new ResponseEntity<>(issueServiceImpl
                 .updateIssuePartialByUserIdByProjectIdByIssueId(userId, projectId, issueId, issueDTO), HttpStatus.OK);
     }

@@ -53,7 +53,7 @@ public class IssueServiceImpl implements IssueService {
             return mapToIssueDto(newIssue);
 
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new ProjectNotFoundException("Project does not involve this user");
         }
     }
 
@@ -64,7 +64,7 @@ public class IssueServiceImpl implements IssueService {
         if (userEntity.getProjectsCreated().contains(project)){ // If user created the project
             return project.getIssues().stream().map(issue -> mapToIssueDto(issue)).collect(Collectors.toList());
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new ProjectNotFoundException("Project not created by this user");
         }
     }
 
@@ -72,7 +72,7 @@ public class IssueServiceImpl implements IssueService {
     public List<IssueDTO> getAllIssuesAssignedByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         if (userEntity.getIssuesAssigned().isEmpty()){
-            throw new IssueNotFoundException("Issue could not be found");
+            throw new IssueNotFoundException("No issue assigned to this user");
         }
         return userEntity.getIssuesAssigned().stream().map(issue -> mapToIssueDto(issue)).collect(Collectors.toList());
     }
@@ -88,13 +88,13 @@ public class IssueServiceImpl implements IssueService {
                 if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
                     return mapToIssueDto(issue);
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotFoundException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotFoundException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new ProjectNotFoundException("Project does not involve this user");
         }
     }
 
@@ -132,13 +132,13 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotFoundException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotFoundException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new ProjectNotFoundException("Project does not involve this user");
         }
     }
 
@@ -349,9 +349,9 @@ public class IssueServiceImpl implements IssueService {
                     .orElseThrow(() -> new PriorityNotFoundException("Priority could not be found"));
             issue.setPriority(priority);
         }
-        Issue newIssue = issueRepository.save(issue);
+        Issue updatedIssue = issueRepository.save(issue);
         updateUpdatedDateByIssueId(issueId);
-        return mapToIssueDto(newIssue);
+        return mapToIssueDto(updatedIssue);
     }
 
     @Override

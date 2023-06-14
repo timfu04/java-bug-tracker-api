@@ -41,7 +41,7 @@ public class SeverityController {
     @DeleteMapping("severity/{severityId}/delete")
     public ResponseEntity<String> deleteSeverityBySeverityId(@PathVariable(value = "severityId") int severityId){
         severityServiceImpl.deleteSeverityBySeverityId(severityId);
-        return ResponseEntity.ok("Severity deleted successfully");
+        return new ResponseEntity<>("Severity deleted successfully", HttpStatus.OK);
     }
 
 }

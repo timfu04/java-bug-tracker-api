@@ -40,7 +40,7 @@ public class StatusController {
     @DeleteMapping("status/{statusId}/delete")
     public ResponseEntity<String> deleteStatusByStatusId(@PathVariable(value = "statusId") int statusId){
         statusServiceImpl.deleteStatusByStatusId(statusId);
-        return ResponseEntity.ok("Status deleted successfully");
+        return new ResponseEntity<>("Status deleted successfully", HttpStatus.OK);
     }
 
 }

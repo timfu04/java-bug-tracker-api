@@ -41,7 +41,7 @@ public class PriorityController {
     @DeleteMapping("priority/{priorityId}/delete")
     public ResponseEntity<String> deletePriorityByPriorityId(@PathVariable(value = "priorityId") int priorityId){
         priorityServiceImpl.deletePriorityByPriorityId(priorityId);
-        return ResponseEntity.ok("Priority deleted successfully");
+        return new ResponseEntity<>("Priority deleted successfully", HttpStatus.OK);
     }
 
 }
