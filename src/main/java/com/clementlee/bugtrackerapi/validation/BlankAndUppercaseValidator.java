@@ -13,6 +13,10 @@ public class BlankAndUppercaseValidator implements ConstraintValidator<ValidateB
     @Override
     public boolean isValid(Object obj, ConstraintValidatorContext context) {
 
+        if (obj == null){
+            return true;
+        }
+
         context.disableDefaultConstraintViolation(); // Disable default message
 
         if (obj.getClass().equals(String.class)){ // If object equals to String class type

@@ -52,6 +52,27 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
+    // Handles IssueNotInThisProjectException
+    @ExceptionHandler(IssueNotInThisProjectException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueNotInThisProjectException(IssueNotInThisProjectException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    // Handles IssueNotAssignedToThisUserException
+    @ExceptionHandler(IssueNotAssignedToThisUserException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueNotAssignedToThisUserException(IssueNotAssignedToThisUserException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    // Handles UserNotInIssueException
+    @ExceptionHandler(UserNotInIssueException.class)
+    public ResponseEntity<ExceptionResponse> handleUserNotInIssueException(UserNotInIssueException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
     // Handles StatusNotFoundException
     @ExceptionHandler(StatusNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleStatusNotFoundException(StatusNotFoundException ex) {
@@ -80,11 +101,32 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
+    // Handles DuplicateUserInIssueException
+    @ExceptionHandler(DuplicateUserInIssueException.class)
+    public ResponseEntity<ExceptionResponse> handleDuplicateUserInIssueException(DuplicateUserInIssueException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
     // Handles IssueCommentNotFoundException
     @ExceptionHandler(IssueCommentNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleIssueCommentNotFoundException(IssueCommentNotFoundException ex) {
         ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // Handles IssueCommentNotInThisIssueException
+    @ExceptionHandler(IssueCommentNotInThisIssueException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueCommentNotInThisIssueException(IssueCommentNotInThisIssueException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    // Handles IssueCommentNotCreatedByThisUserException
+    @ExceptionHandler(IssueCommentNotCreatedByThisUserException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueCommentNotCreatedByThisUserException(IssueCommentNotCreatedByThisUserException ex) {
+        ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
     // Handles DuplicateUserInProjectException

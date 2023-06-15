@@ -15,10 +15,10 @@ public class IssueDTO {
 
     private int id;
 
-    @NotBlank(message = "Invalid title: Empty title", groups = {IssueCreateValidationGroup.class, IssueUpdateValidationGroup.class})
+    @NotBlank(message = "Invalid title: Empty title", groups = {IssueCreateValidationGroup.class})
     private String title;
 
-    @NotBlank(message = "Invalid description: Empty description", groups = {IssueCreateValidationGroup.class, IssueUpdateValidationGroup.class})
+    @NotBlank(message = "Invalid description: Empty description", groups = {IssueCreateValidationGroup.class})
     private String description;
 
     private LocalDateTime createdDate;

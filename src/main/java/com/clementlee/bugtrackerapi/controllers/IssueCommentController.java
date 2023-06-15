@@ -1,6 +1,5 @@
 package com.clementlee.bugtrackerapi.controllers;
 
-
 import com.clementlee.bugtrackerapi.dto.IssueCommentDTO;
 import com.clementlee.bugtrackerapi.services.impl.IssueCommentServiceImpl;
 import jakarta.validation.Valid;
@@ -57,11 +56,14 @@ public class IssueCommentController {
                                                                                         @PathVariable(value = "projectId")int projectId,
                                                                                         @PathVariable(value = "issueId")int issueId,
                                                                                         @PathVariable(value = "issueCommentId")int issueCommentId,
-                                                                                        @RequestBody IssueCommentDTO issueCommentDTO){
+                                                                                        @Valid @RequestBody IssueCommentDTO issueCommentDTO){
         return new ResponseEntity<>(issueCommentServiceImpl
                 .updateIssueCommentByUserIdByProjectIdByIssueIdByIssueCommentId(userId, projectId, issueId,
                                                                                 issueCommentId, issueCommentDTO), HttpStatus.OK);
     }
+
+
+
 
     @DeleteMapping("user/{userId}/project/{projectId}/issue/{issueId}/issue-comment/{issueCommentId}/delete")
     public ResponseEntity<String> deleteIssueCommentByUserIdByProjectIdByIssueIdByIssueCommentId(
@@ -103,6 +105,11 @@ public class IssueCommentController {
     public ResponseEntity<String> deleteIssueCommentByIssueCommentId(@PathVariable(value = "issueCommentId") int issueCommentId){
         issueCommentServiceImpl.deleteIssueCommentByIssueCommentId(issueCommentId);
         return new ResponseEntity<>("Issue comment deleted successfully", HttpStatus.OK);
+    }
+
+    @PatchMapping("issue-comment/{issueCommentId}/update-updated-date")
+    public ResponseEntity<IssueCommentDTO> updateUpdatedDateByIssueCommentId(@PathVariable(value = "issueCommentId") int issueCommentId){
+        return new ResponseEntity<>(issueCommentServiceImpl.updateUpdatedDateByIssueCommentId(issueCommentId), HttpStatus.OK);
     }
 
 }

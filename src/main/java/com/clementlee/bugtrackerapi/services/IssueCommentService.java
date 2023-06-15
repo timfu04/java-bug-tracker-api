@@ -19,5 +19,6 @@ public interface IssueCommentService {
     IssueCommentDTO getIssueCommentByIssueCommentId(int issueCommentId);
     IssueCommentDTO updateIssueCommentByIssueCommentId(int issueCommentId, IssueCommentDTO issueCommentDTO);
     void deleteIssueCommentByIssueCommentId(int issueCommentId);
+    IssueCommentDTO updateUpdatedDateByIssueCommentId(int issueCommentId);
 
 }

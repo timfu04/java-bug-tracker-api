@@ -1,10 +1,7 @@
 package com.clementlee.bugtrackerapi.services.impl;
 
 import com.clementlee.bugtrackerapi.dto.IssueCommentDTO;
-import com.clementlee.bugtrackerapi.exceptions.IssueCommentNotFoundException;
-import com.clementlee.bugtrackerapi.exceptions.IssueNotFoundException;
-import com.clementlee.bugtrackerapi.exceptions.ProjectNotFoundException;
-import com.clementlee.bugtrackerapi.exceptions.UserNotFoundException;
+import com.clementlee.bugtrackerapi.exceptions.*;
 import com.clementlee.bugtrackerapi.models.Issue;
 import com.clementlee.bugtrackerapi.models.IssueComment;
 import com.clementlee.bugtrackerapi.models.Project;
@@ -35,10 +32,9 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-
-        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
-            if (project.getIssues().contains(issue)){ // If project contains given issue
-                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+        if (project.getUsersInvolved().contains(userEntity)){ // If project involves given user
+            if (issue.getProject().equals(project)){ // If issue belongs to given project
+                if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
                     IssueComment issueComment = new IssueComment();
                     issueComment.setCommentText(issueCommentDTO.getCommentText());
                     issueComment.setCreatedDate(LocalDateTime.now());
@@ -47,13 +43,13 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                     IssueComment newIssueComment = issueCommentRepository.save(issueComment);
                     return mapToIssueCommentDto(newIssueComment);
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotInThisProjectException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 
@@ -62,19 +58,18 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project could not be found"));
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new IssueNotFoundException("Issue could not be found"));
-
-        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
-            if (project.getIssues().contains(issue)){ // If project contains given issue
-                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
+        if (project.getUsersInvolved().contains(userEntity)){ // If project involves given user
+            if (issue.getProject().equals(project)){ // If issue belongs to given project
+                if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
                     return issue.getIssueComments().stream().map(issueComment -> mapToIssueCommentDto(issueComment)).collect(Collectors.toList());
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotInThisProjectException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 
@@ -82,7 +77,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
     public List<IssueCommentDTO> getAllIssueCommentsByUserId(int userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User could not be found"));
         if (userEntity.getIssueComments().isEmpty()){
-            throw new IssueCommentNotFoundException("Issue comment could not be found");
+            throw new IssueCommentNotFoundException("No issue comment created by this user");
         }
         return userEntity.getIssueComments().stream().map(issueComment -> mapToIssueCommentDto(issueComment)).collect(Collectors.toList());
     }
@@ -95,26 +90,26 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
-            if (project.getIssues().contains(issue)){ // If project contains given issue
-                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
-                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
-                        if (userEntity.getIssueComments().contains(issueComment)){
+        if (project.getUsersInvolved().contains(userEntity)){ // If project involves given user
+            if (issue.getProject().equals(project)){ // If issue belongs to given project
+                if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
+                    if (issueComment.getIssue().equals(issue)){ // If issue comment belongs to given issue
+                        if (issueComment.getUser().equals(userEntity)){ // If issue comment created by given user
                             return mapToIssueCommentDto(issueComment);
                         } else {
-                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                            throw new IssueCommentNotCreatedByThisUserException("Issue comment not created by this user");
                         }
                     } else {
-                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotInThisProjectException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 
@@ -127,28 +122,28 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
-            if (project.getIssues().contains(issue)){ // If project contains given issue
-                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
-                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
-                        if (userEntity.getIssueComments().contains(issueComment)){
+        if (project.getUsersInvolved().contains(userEntity)){ // If project involves given user
+            if (issue.getProject().equals(project)){ // If issue belongs to given project
+                if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
+                    if (issueComment.getIssue().equals(issue)){ // If issue comment belongs to given issue
+                        if (issueComment.getUser().equals(userEntity)){ // If issue comment created by given user
                             issueComment.setCommentText(issueCommentDTO.getCommentText());
                             IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
                             return mapToIssueCommentDto(updatedIssueComment);
                         } else {
-                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                            throw new IssueCommentNotCreatedByThisUserException("Issue comment not created by this user");
                         }
                     } else {
-                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotInThisProjectException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 
@@ -160,26 +155,26 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
-            if (project.getIssues().contains(issue)){ // If project contains given issue
-                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
-                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
-                        if (userEntity.getIssueComments().contains(issueComment)){
+        if (project.getUsersInvolved().contains(userEntity)){ // If project involves given user
+            if (issue.getProject().equals(project)){ // If issue belongs to given project
+                if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
+                    if (issueComment.getIssue().equals(issue)){ // If issue comment belongs to given issue
+                        if (issueComment.getUser().equals(userEntity)){ // If issue comment created by given user
                             issueCommentRepository.deleteById(issueCommentId);
                         } else {
-                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                            throw new IssueCommentNotCreatedByThisUserException("Issue comment not created by this user");
                         }
                     } else {
-                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotInThisProjectException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 
@@ -191,28 +186,28 @@ public class IssueCommentServiceImpl implements IssueCommentService {
         IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
                 .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
 
-        if (userEntity.getProjectsInvolved().contains(project)){ // If user involves in given project
-            if (project.getIssues().contains(issue)){ // If project contains given issue
-                if (userEntity.getIssuesAssigned().contains(issue)){ // If user is assigned to given issue
-                    if (issue.getIssueComments().contains(issueComment)){ // If issue contains issue comment
-                        if (userEntity.getIssueComments().contains(issueComment)){
+        if (project.getUsersInvolved().contains(userEntity)){ // If project involves given user
+            if (issue.getProject().equals(project)){ // If issue belongs to given project
+                if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
+                    if (issueComment.getIssue().equals(issue)){ // If issue comment belongs to given issue
+                        if (issueComment.getUser().equals(userEntity)){ // If issue comment created by given user
                             issueComment.setUpdatedDate(LocalDateTime.now());
                             IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
                             return mapToIssueCommentDto(updatedIssueComment);
                         } else {
-                            throw new IssueCommentNotFoundException("Issue comment could not be found");
+                            throw new IssueCommentNotCreatedByThisUserException("Issue comment not created by this user");
                         }
                     } else {
-                        throw new IssueCommentNotFoundException("Issue comment could not be found");
+                        throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotFoundException("Issue could not be found");
+                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
                 }
             } else {
-                throw new IssueNotFoundException("Issue could not be found");
+                throw new IssueNotInThisProjectException("Issue not in this project");
             }
         } else {
-            throw new ProjectNotFoundException("Project could not be found");
+            throw new UserNotInProjectException("User not in this project");
         }
     }
 
@@ -242,6 +237,15 @@ public class IssueCommentServiceImpl implements IssueCommentService {
     public void deleteIssueCommentByIssueCommentId(int issueCommentId) {
         issueCommentRepository.findById(issueCommentId).orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
         issueCommentRepository.deleteById(issueCommentId);
+    }
+
+    @Override
+    public IssueCommentDTO updateUpdatedDateByIssueCommentId(int issueCommentId) {
+        IssueComment issueComment = issueCommentRepository.findById(issueCommentId)
+                .orElseThrow(() -> new IssueCommentNotFoundException("Issue comment could not be found"));
+        issueComment.setUpdatedDate(LocalDateTime.now());
+        IssueComment updatedIssueComment = issueCommentRepository.save(issueComment);
+        return mapToIssueCommentDto(updatedIssueComment);
     }
 
     // Map IssueComment to IssueCommentDTO
