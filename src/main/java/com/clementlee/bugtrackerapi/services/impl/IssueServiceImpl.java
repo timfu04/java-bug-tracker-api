@@ -85,7 +85,7 @@ public class IssueServiceImpl implements IssueService {
                 if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
                     return mapToIssueDto(issue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -128,7 +128,7 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -148,7 +148,7 @@ public class IssueServiceImpl implements IssueService {
                 if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
                     issueRepository.deleteById(issueId);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -170,7 +170,7 @@ public class IssueServiceImpl implements IssueService {
                     Issue updatedIssue = issueRepository.save(issue);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -193,7 +193,7 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -216,7 +216,7 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -242,7 +242,7 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -268,7 +268,7 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -294,7 +294,7 @@ public class IssueServiceImpl implements IssueService {
                     updateUpdatedDateByUserIdByProjectIdByIssueId(userId, projectId, issueId);
                     return mapToIssueDto(updatedIssue);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");

@@ -60,8 +60,8 @@ public class GlobalExceptionHandler {
     }
 
     // Handles IssueNotAssignedToThisUserException
-    @ExceptionHandler(IssueNotAssignedToThisUserException.class)
-    public ResponseEntity<ExceptionResponse> handleIssueNotAssignedToThisUserException(IssueNotAssignedToThisUserException ex) {
+    @ExceptionHandler(IssueNotAssignedToUserException.class)
+    public ResponseEntity<ExceptionResponse> handleIssueNotAssignedToThisUserException(IssueNotAssignedToUserException ex) {
         ExceptionResponse exceptionResponse = createExceptionResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }

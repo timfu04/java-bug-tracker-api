@@ -43,7 +43,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                     IssueComment newIssueComment = issueCommentRepository.save(issueComment);
                     return mapToIssueCommentDto(newIssueComment);
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -63,7 +63,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                 if (issue.getUsersAssigned().contains(userEntity)){ // If issue assigned to given user
                     return issue.getIssueComments().stream().map(issueComment -> mapToIssueCommentDto(issueComment)).collect(Collectors.toList());
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -103,7 +103,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                         throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -137,7 +137,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                         throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -168,7 +168,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                         throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");
@@ -201,7 +201,7 @@ public class IssueCommentServiceImpl implements IssueCommentService {
                         throw new IssueCommentNotInThisIssueException("Issue comment not in this issue");
                     }
                 } else {
-                    throw new IssueNotAssignedToThisUserException("Issue not assigned to this user");
+                    throw new IssueNotAssignedToUserException("Issue not assigned to this user");
                 }
             } else {
                 throw new IssueNotInThisProjectException("Issue not in this project");

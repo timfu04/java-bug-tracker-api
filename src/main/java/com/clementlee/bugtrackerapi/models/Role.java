@@ -22,7 +22,9 @@ public class Role {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @JsonIgnore // Skip "users" field when serializing "Role" object into JSON (avoid infinite recursion in bidirectional relationships)
+    // Exclude "users" field when serializing "Role" object into JSON
+    // Avoid infinite recursion in bidirectional relationship
+    @JsonIgnore
     @OneToMany(mappedBy = "role")
     private List<UserEntity> users;
 
