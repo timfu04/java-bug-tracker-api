@@ -1,6 +1,7 @@
 # Java Bug Tracker API
 
 ## 1. Description
+- Java Bug Tracker API is a Java backend project that utilizes REST API to manage a range of entities. This project consists of a total of 8 entities, namely role, user, project, issue, status, severity, priority, and issue comment. It is built using the Spring Boot framework, adhering to the MVC design pattern for effective separation of concerns. It also incorporates custom exceptions with a global exception handler to ensure robust error handling. Besides that, it features custom annotations and validators, including date format validator, date range validator, and uppercase validator to enhance the data integrity and validation capabilities of the application.
 
 ## 2. Database Business Rules
 1. A role has more than one user, a user belongs to only one role (roles to users, 1 to M)
@@ -172,29 +173,77 @@
 ## 7. Issue
 ### 7.1 CRUD operations
 1. Create issue by user id by project id
+   - `POST` request
+   - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/create`
 2. Get all issues by user id by project id
+   - `GET` request
+   - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue`
 3. Get all issues assigned by user id
+    - `GET` request
+    - API endpoint: `/api/v1/user/{userId}/issue`
 4. Get issue by user id by project id by issue id
+    - `GET` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}`
 5. Update issue partial by user id by project id by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-partial`
 6. Delete issue by user id by project id by issue id
+    - `DELETE` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/delete`
 7. Update updated date by user id by project id by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-updated-date`
 8. Update resolved date by user id by project id by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-resolved-date`
 9. Update closed date by user id by project id by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-closed-date`
 10. Update status by user id by project id by issue id by status name
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-status`
 11. Update severity by user id by project id by issue id by status name
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-severity`
 12. Update priority by user id by project id by issue id by status name
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/update-priority`
 13. Get all issues
+    - `GET` request
+    - API endpoint: `/api/v1/issue`
 14. Get issue by issue id
+    - `GET` request
+    - API endpoint: `/api/v1/issue/{issueId}`
 15. Update issue partial by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-partial`
 16. Delete issue by issue id
+    - `DELETE` request
+    - API endpoint: `/api/v1/issue/{issueId}/delete`
 17. Update updated date by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-updated-date`
 18. Update resolved date by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-resolved-date`
 19. Update closed date by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-closed-date`
 20. Update status by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-status`
 21. Update severity by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-severity`
 22. Update priority by issue id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue/{issueId}/update-priority`
 23. Assign user to issue by project id by issue id by user to add id
+    - `PUT` request
+    - API endpoint: `/api/v1/project/{projectId}/issue/{issueId}/add-user/user/{userToAddId}`
 24. Remove user from issue by project id by issue id by user to remove id
+    - `DELETE` request
+    - API endpoint: `/api/v1/project/{projectId}/issue/{issueId}/remove-user/user/{userToRemoveId}`
 
 ### 7.3 Database constraints used
 1. `UNIQUE`
@@ -222,13 +271,6 @@
 
 ### 7.7 Custom validators used
 1. `BlankAndUppercaseValidator`
-
-
-
-
-
-
-
 
 
 
@@ -365,5 +407,58 @@
 
 
 
-
 ## 11. Issue Comment
+### 11.1 CRUD operations
+1. Create issue comment by user id by project id by issue id
+    - `POST` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/issue-comment/create`
+2. Get all issue comments by user id by project id by issue id
+    - `GET` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/issue-comment`
+3. Get all issue comments by user id
+    - `GET` request
+    - API endpoint: `/api/v1/user/{userId}/issue-comment`
+4. Get issue comment by user id by project id by issue id by issue comment id
+    - `GET` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/issue-comment/{issueCommentId}`
+5. Update issue comment by user id by project id by issue id by issue comment id
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/issue-comment/{issueCommentId}/update`
+6. Delete issue comment by user id by project id by issue id by issue comment id
+    - `DELETE` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/issue-comment/{issueCommentId}/delete`
+7. Update updated date by user id by project id by issue id by issue comment id
+    - `PATCH` request
+    - API endpoint: `/api/v1/user/{userId}/project/{projectId}/issue/{issueId}/issue-comment/{issueCommentId}/update-updated-date`
+8. Get all issue comments
+    - `GET` request
+    - API endpoint: `/api/v1/issue-comment`
+9. Get issue comment by issue comment id
+    - `GET` request
+    - API endpoint: `/api/v1/issue-comment/{issueCommentId}`
+10. Update issue comment by issue comment id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue-comment/{issueCommentId}/update`
+11. Delete issue comment by issue comment id
+    - `DELETE` request
+    - API endpoint: `/api/v1/issue-comment/{issueCommentId}/delete`
+12. Update updated date by issue comment id
+    - `PATCH` request
+    - API endpoint: `/api/v1/issue-comment/{issueCommentId}/update-updated-date`
+
+### 10.2 Database constraints used
+1. `NOT NULL`
+
+### 10.3 Validators used
+1. `@NotBlank`
+
+### 10.4 Custom exceptions used
+1. `UserNotFoundException`
+2. `ProjectNotFoundException`
+3. `IssueNotFoundException`
+4. `IssueCommentNotFoundException`
+5. `IssueNotAssignedToUserException`
+6. `IssueNotInThisProjectException`
+7. `UserNotInProjectException`
+8. `IssueCommentNotCreatedByThisUserException` 
+9. `IssueCommentNotInThisIssueException`
